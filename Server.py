@@ -2,6 +2,9 @@ import asyncio
 import websockets
 import os
 import xml.etree.ElementTree as ET
+from collections import defaultdict
+import re
+
 ################################ Retrieves the scanable files
 def get_files():
     files = list()
@@ -36,46 +39,63 @@ def parse_element(root, tree_path, stage):
             data += parse_element(root, tree_path+"/*", stage)
     return data
 ################################ Retrieves the data in the CSV format
-def scan_as_csv(path, element):
-    tree = ET.parse(path)
-    root = tree.getroot()
-    data = [""]
-    for child in root.iter():
-        line = ""
-        if child.tag == element:
-            for item in child.iter():
-                if item.text.strip():               # Removes 'empty' entries
-                    if item.tag not in data[0]:
-                        data[0] += item.tag+","
-                    line += item.text.strip()+","
-        elif element in child.attrib:
-            data[0] = element
-            data.append(child.get(element))
-        if line != "":
-            data.append(line)
+def scan_as_csv(path, user_selection):
+    xml = get_as_xml(path, user_selection)
+    temp = defaultdict(list)
+    results = [""]
+    len_help = ""
+    for element in xml:
+        tag = re.search(r"\<(\w+)", element).group(1)
+        len_help = tag
+        value = re.search(r"\>([a-zA-Z0-9 ]*)\<", element).group(1)
+        temp[tag].append(value)
+    line = ""
+    for key in temp:
+        line += key+","
+    results[0] = line[:-1]
     i = 0
-    while i < len(data):                            # Removes the last comma
-        if data[i][-1:] == ",":
-            data[i] = data[i][:-1]
+    while i < len(temp[len_help]):
+        line = ""
+        for key in temp:
+            line += temp[key][i]+","
+        results.append(line[:-1])
         i += 1
-    return data
+    return results
 ################################ Retrieves the data in the XML format
-def scan_as_xml(path, element):
-    file = open(path)
-    lines = file.readlines()
-    data = list()
-    add_data = 0
-    for line in lines:
-        if "<"+element in line:
-            add_data = 1
-        # Attributes cannot be displayed as xml -> output as CSV
-        elif element+"=" in line:
-            return scan_as_csv(path, element)
-        if add_data:
-            data.append(line)
-        if "</"+element in line:
-            add_data = 0
-    return data
+def scan_as_xml(path, user_selection):
+    root = ET.parse(path).getroot()
+    results = list()
+    for element in root.findall("./*"):
+        temp = list()
+        add_data = 0
+        line = ""
+        for key in user_selection:
+            for subelement in ET.tostring(element).decode("utf-8").split():
+                current_subelement = str(subelement)
+                if "<"+key in current_subelement:
+                    add_data = 1
+                if add_data == 1:
+                    line += current_subelement
+                if "</"+key in current_subelement:
+                    temp.append(line)
+                    line = ""
+                    add_data = 0
+                    break  
+        contains_values = 0
+        for key in user_selection:
+            value = user_selection[key]
+            for line in temp:
+                if value != "" and value in line and key in line:
+                    contains_values += 1
+                    break
+                elif value != "" and value not in line and key in line:
+                    break
+                elif value == "" and key in line:
+                    contains_values += 1
+                    break
+        if contains_values == len(user_selection):
+            results += temp
+    return results
 ################################ Writes user input to a file
 def write_to_file(path, content):
     file = open(path, "r")
@@ -90,6 +110,7 @@ async def echo(websocket, path):
     files = get_files()                             # Server retrieves selectable schemas
     data = list()                                   # Contains the actual data
     path = ""                                       # Will later on contain the path to the selected file
+    user_selection = dict()                         # Tags and attributes the user selected
     async for message in websocket:
         message_content = message.split(":")
         message_id = int(message_content[0])        # Each message from the client contains an ID for better management
@@ -113,18 +134,21 @@ async def echo(websocket, path):
             await websocket.send(response)
         elif message_id == 3:                       # User selected the desired data
             path = "."+path.split(".")[1]+".xml"    # Switch path from .xsd to .xml file to parse the actual content
-            #######################################################################################
-            # HIER NUTZER SELECTION PARSEN! KOMMT ALS DICTIONARY IN FORM 3:KEY = VALUE|KEY = VALUE|...
-            # BEISPIEL VON MORCI: ICH SUCHE DEN VORNAMEN VON LEUTEN DIE IN WILDAU WOHNEN...
-            #######################################################################################
+            temp = message_content[1]
+            for key_value in temp.split("|"):
+                key = key_value.split("=")[0]
+                if key == "":
+                    break
+                value = key_value.split("=")[1]
+                user_selection[key] = value
             response = "Select the output format:\n[1] CSV\n[2] XML"
             await websocket.send(response)
         elif message_id == 4:                       # User selected the output format
             output_format = int(message_content[1])
             if output_format == 0:
-                data = scan_as_csv(path, element)
+                data = scan_as_csv(path, user_selection)
             else:
-                data = scan_as_xml(path, element)
+                data = scan_as_xml(path, user_selection)
             response = ""
             if len(data) == 1 and data[0] == "":    # CSV has a set header => len(data) will never be 0
                 response = "Could not find any matching data!"

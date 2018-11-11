@@ -14,7 +14,6 @@
 						<xsd:element name="Zipcode" type="xsd:integer" />
 						<xsd:element name="City" type="xsd:string" />
 					</xsd:sequence>
-                    <xsd:attribute name="Addresstype" default="Personal"/>
 				</xsd:complexType>
 			</xsd:element>
 		</xsd:sequence>

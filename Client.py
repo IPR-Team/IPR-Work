@@ -116,8 +116,9 @@ async def connect_to(websocket_address):
         response = await websocket.recv()                   # Gets available data for choosen file  
         dictionary = get_data_selection(response)
         message = ""
+        print(dictionary)
         for key in dictionary:
-           message += key +" = "+ dictionary[key]+"|"
+           message += key +"="+ dictionary[key]+"|"
         print("Retrieving data...")
         await websocket.send("3:"+message)
         response = await websocket.recv()                   # User selects output format
