@@ -40,7 +40,7 @@ def parse_element(root, tree_path, stage):
     return data
 ################################ Retrieves the data in the CSV format
 def scan_as_csv(path, user_selection):
-    xml = get_as_xml(path, user_selection)
+    xml = scan_as_xml(path, user_selection)
     temp = defaultdict(list)
     results = [""]
     len_help = ""
