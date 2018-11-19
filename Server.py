@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 import websockets
 import os
 import xml.etree.ElementTree as ET
@@ -8,7 +9,7 @@ import re
 ################################ Retrieves the scanable files
 def get_files():
     files = list()
-    for file in os.listdir(".\Dateien"):
+    for file in os.listdir("Dateien"):
         if ".xsd" in file:
             files.append(file)
     return files
@@ -105,8 +106,14 @@ def write_to_file(path, content):
     file = open(path, "w")
     file.writelines(lines)
     file.close()
+################################ Output 
+def log_output(message):
+    now = datetime.now();
+    print(str(now.strftime("%x %X")) + " " + message);
 ################################ Server
 async def echo(websocket, path):
+    remoteAddress = str(websocket.remote_address[0]) + ":" + str(websocket.remote_address[1]);
+    log_output("New client has been connected (" + remoteAddress + ")");
     files = get_files()                             # Server retrieves selectable schemas
     data = list()                                   # Contains the actual data
     path = ""                                       # Will later on contain the path to the selected file
@@ -114,8 +121,13 @@ async def echo(websocket, path):
     async for message in websocket:
         message_content = message.split(":")
         message_id = int(message_content[0])        # Each message from the client contains an ID for better management
-
-        if message_id == 1:                         # Connection established
+        
+        if message_id == -1:                        # Close connection
+            response = "Connection closed."
+            await websocket.send(response)
+            log_output("Connection closed by client '" + remoteAddress + "'");
+            await websocket.close();
+        elif message_id == 1:                        # Connection established
             response = "Welcome! Please select a file to read:"
             counter = 1
             for file in files:
@@ -124,7 +136,7 @@ async def echo(websocket, path):
             await websocket.send(response)
         elif message_id == 2:                       # User selected a file
             file_index = int(message_content[1])
-            path = ".\\Dateien\\"+files[file_index] # Set path to file
+            path = "Dateien/"+files[file_index] # Set path to file
             data = scan_schema(path)                # Scans the selected file
             response = "Select the data you want to collect:"
             counter = 1
@@ -133,7 +145,7 @@ async def echo(websocket, path):
                 counter += 1
             await websocket.send(response)
         elif message_id == 3:                       # User selected the desired data
-            path = "."+path.split(".")[1]+".xml"    # Switch path from .xsd to .xml file to parse the actual content
+            path = path.split(".")[0]+".xml"    # Switch path from .xsd to .xml file to parse the actual content
             temp = message_content[1]
             for key_value in temp.split("|"):
                 key = key_value.split("=")[0]
@@ -168,7 +180,7 @@ async def echo(websocket, path):
             await websocket.send(response)
         elif message_id == 6:                       # User selected a file to add data
             file_index = int(message_content[1])
-            path = ".\\Dateien\\"+files[int(file_index)] # Set path to file
+            path = "Dateien/"+files[int(file_index)] # Set path to file
             data = scan_schema(path)
             response = ""                           
             for data_set in data:
@@ -176,12 +188,16 @@ async def echo(websocket, path):
             await websocket.send(response)
         elif message_id == 7:                       # User input for the file
             user_input = message_content[1]
-            path = "."+path.split(".")[1]+".xml"
+            path = path.split(".")[0]+".xml"
             write_to_file(path, user_input)
             response = "Transfer finished succesfully.\nClosing connection..."
             await websocket.send(response)
+        if message_id >= 0:
+            log_output("Received new request(" + str(message_id) + ") from '" + remoteAddress + "'");
             
 def main():
+    log_output("Server is starting ...");
+    log_output("Now listening on: 'localhost:1511'");
     server = websockets.serve(echo, 'localhost', 1511)
     asyncio.get_event_loop().run_until_complete( server )
     asyncio.get_event_loop().run_forever()

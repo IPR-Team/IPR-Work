@@ -13,16 +13,22 @@ def get_user_input(possible_choices):
    index = 0
    while(True):
          try:
-            index = int(input("\nYour choice: "))-1
-            if index < 0:
+            index = int(input("\nYour choice: "))-1;
+            if index >= 0:
+                possible_choices[index]
+            elif index < -2:
                raise IndexError()
-            possible_choices[index]
             break
          except ValueError:
             print("Please enter a number!")
          except IndexError:
             print("Your value is not in range!")
    return index
+################################ Requests a connection abort
+async def close_connection(websocket):
+    print("Program shutting down...");
+    await websocket.send("-1:")
+    
 ################################ User input for data selection
 def get_data_selection(message):
     results = list()
@@ -35,14 +41,17 @@ def get_data_selection(message):
     user_selection = dict()
     while(True):
         try:
-            index = int(input("\nYour choice: "))-1
-            if index < 0:
+            index = int(input("\nYour choice: "))-1;
+            if index < -2:
                 raise IndexError()
-            results[index]                          # Raises errors, if invalid
-            value = ""
-            if temp_list[index + 1].split(":")[2] == "False":
-                value = input("\nEnter value for "+results[index]+"(leave empty, if not desired): ")
-            user_selection[results[index]] = value.strip()
+            elif index >= 0:
+                results[index]                          # Raises errors, if invalid
+                value = ""
+                if temp_list[index + 1].split(":")[2] == "False":
+                    value = input("\nEnter value for "+results[index]+"(leave empty, if not desired): ")
+                user_selection[results[index]] = value.strip()
+            elif index == -2:
+                return index;
         except ValueError:
             print("Please enter a number!")
         except IndexError:
@@ -52,6 +61,9 @@ def get_data_selection(message):
             print("Proceeding...")
         elif text == "n":
             break
+        elif int(text) == -1:
+            index = int(text);
+            return index - 1;
         else:
             print("No valid input. Canceling...")
             break
@@ -84,12 +96,16 @@ def prepare_data(data):
             while a < len(buffer):
                 if parents[-1][0] in buffer[a]:             # Attributes must be appended to the parent element
                     text = input(element_name+":")
+                    if int(text) == -1:
+                        return -2;
                     buffer[a] = buffer[a][:-1]+" "+element_name+"=\""+text+"\">"
                     break
                 a += 1
         elif has_subelements == "False":                    # Element does not have subelement => will be closed
             stages.pop()
             text = input(element_name+":")
+            if int(text) == -1:
+                return -2;
             buffer.append("<"+element_name+">"+text+"</"+element_name+">")
         else:                                               # Element has nested subelements
             parents.append(line_data)
@@ -106,39 +122,54 @@ def prepare_data(data):
 ################################ Client
 async def connect_to(websocket_address):
     async with websockets.connect(websocket_address) as websocket:
+        print("Program starting...");
+        print("Note: Enter '-1' at any time to shutdown program immediately.");
         await websocket.send("1:")                          # Message to establish the connection
         response = await websocket.recv()                   # Welcome message
         print(response)
         possible_choices = get_possible_choices(response)   # User input for file seletion
         index = get_user_input(possible_choices)
+        if index == -2:
+            await close_connection(websocket);
+            return;
         print("Retrieving data from "+possible_choices[index])
         await websocket.send("2:"+str(index))
-        response = await websocket.recv()                   # Gets available data for choosen file  
-        dictionary = get_data_selection(response)
+        response = await websocket.recv()     # Gets available data for choosen file  
+        test = get_data_selection(response)
+        if test == -2:
+            await close_connection(websocket);
+            return;
+        dictionary = test;
         message = ""
         print(dictionary)
         for key in dictionary:
-           message += key +"="+ dictionary[key]+"|"
+            message += key +"="+ dictionary[key]+"|"
         print("Retrieving data...")
         await websocket.send("3:"+message)
         response = await websocket.recv()                   # User selects output format
         print(response)
         possible_choices = get_possible_choices(response)
         index = get_user_input(possible_choices)
+        if index == -2:
+            await close_connection(websocket);
+            return;
         await websocket.send("4:"+str(index))
         response = await websocket.recv()                   # Result of selected data
         print(response)
         possible_choices = get_possible_choices(response)   # User selects if they want to add data?
         index = get_user_input(possible_choices)
-        if index == 1:
-            websocket.close()
-            return
+        if index == 1 or index == -2:
+            await close_connection(websocket);
+            return;
         else:
             await websocket.send("5:"+str(index))
         response = await websocket.recv()                   # Selecting a file to add data
         print(response)
         possible_choices = get_possible_choices(response)
         index = get_user_input(possible_choices)
+        if index == -2:
+            await close_connection(websocket);
+            return;
         await websocket.send("6:"+str(index))
         response = await websocket.recv()
         message = response.split("|")
@@ -147,9 +178,14 @@ async def connect_to(websocket_address):
             if m != "":
                 data.append(m)
         message = prepare_data(data)
+        if int(message) == -2:
+            await close_connection(websocket);
+            return;
         await websocket.send("7:"+message)
         response = await websocket.recv()
         print(response)
+        await close_connection(websocket);
+        return;
 
 def main():
     asyncio.get_event_loop().run_until_complete(connect_to('ws://localhost:1511'))
