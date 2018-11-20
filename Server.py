@@ -3,8 +3,40 @@ from datetime import datetime
 import websockets
 import os
 import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import Element, SubElement
 from collections import defaultdict
+from multiprocessing import Process
 import re
+
+################################ Configuration
+def load_configuration(path):
+    result = dict();
+    configFile = ET.parse(path);
+    root = configFile.getroot();
+    if str(root.tag) == "configuration":
+        for child in root:
+            if str(child.tag) == "ip":
+                value = str(child.text);
+                result[child.tag] = value;
+            if str(child.tag) == "port":
+                value = str(child.text);
+                result[child.tag] = value;
+        return result;
+    return -1;
+
+def create_configuration(path, config):
+    root = Element('configuration');
+    for key in config:
+        child = SubElement(root, key);
+        child.text = config[key];
+    tree = ET.ElementTree(root);
+    tree.write(path);
+    
+def create_default_configuration_object():
+    config = dict();
+    config["ip"] = "localhost";
+    config["port"] = "1511";
+    return config;
 
 ################################ Retrieves the scanable files
 def get_files():
@@ -106,26 +138,35 @@ def write_to_file(path, content):
     file = open(path, "w")
     file.writelines(lines)
     file.close()
-################################ Output 
-def log_output(message):
+################################ output log 
+def log_output(message, tag):
     now = datetime.now();
-    print(str(now.strftime("%x %X")) + " " + message);
+    print(str(now.strftime("%x %X")) + " [" + tag + "] " + message);
+
+def log_output_error(message):
+    log_output(message, "ERROR");
+
+def log_output_info(message):
+    log_output(message, "INFO");
+    
+def log_output_system(message):
+    log_output(message, "SYSTEM");
 ################################ Server
 async def echo(websocket, path):
     remoteAddress = str(websocket.remote_address[0]) + ":" + str(websocket.remote_address[1]);
-    log_output("New client has been connected (" + remoteAddress + ")");
-    files = get_files()                             # Server retrieves selectable schemas
-    data = list()                                   # Contains the actual data
-    path = ""                                       # Will later on contain the path to the selected file
+    log_output_info("New client has been connected (" + remoteAddress + ")");
+    files = get_files();                             # Server retrieves selectable schemas
+    data = list();                                   # Contains the actual data
+    path = "";                                       # Will later on contain the path to the selected file
     user_selection = dict()                         # Tags and attributes the user selected
     async for message in websocket:
         message_content = message.split(":")
         message_id = int(message_content[0])        # Each message from the client contains an ID for better management
         
         if message_id == -1:                        # Close connection
-            response = "Connection closed."
+            response = "-1"
             await websocket.send(response)
-            log_output("Connection closed by client '" + remoteAddress + "'");
+            log_output_info("Connection closed by client '" + remoteAddress + "'");
             await websocket.close();
         elif message_id == 1:                        # Connection established
             response = "Welcome! Please select a file to read:"
@@ -193,14 +234,43 @@ async def echo(websocket, path):
             response = "Transfer finished succesfully.\nClosing connection..."
             await websocket.send(response)
         if message_id >= 0:
-            log_output("Received new request(" + str(message_id) + ") from '" + remoteAddress + "'");
-            
+            log_output_info("Received new request(" + str(message_id) + ") from '" + remoteAddress + "'");
+    
+def control(loop):
+    print("Enter 'exit' or 'quit' at any time to stop server.");
+    while 1 == 1:
+            if input("") == "exit" or input() == "quit":
+                print("Exited");
+                loop.stop();
+                #loop.close();
+                break;
+         
+############################################################### main
 def main():
-    log_output("Server is starting ...");
-    log_output("Now listening on: 'localhost:1511'");
-    server = websockets.serve(echo, 'localhost', 1511)
-    asyncio.get_event_loop().run_until_complete( server )
-    asyncio.get_event_loop().run_forever()
+    log_output_system("Server has been started ...");
+    print("To close server just close comandline or press control+C");
+    path = "server_config.xml";
+    try:
+        log_output_info("Loading configuration...");
+        config = load_configuration(path);
+        log_output_info("Now listening on: '" + config["ip"] + ":" + config["port"] + "'");
+        server = websockets.serve(echo, config["ip"], int(config["port"]));
+        loop = asyncio.get_event_loop();
+        loop.run_until_complete( server );
+        loop.run_forever();
+        
+            
+    except FileNotFoundError:
+        log_output_error("No configuration file was found.");
+        log_output_info("Creating new configuration file at '" + path + "' ...");
+        log_output_info("Please edit configuration file and restart program.");
+        config = create_default_configuration_object();
+        create_configuration(path, config);
+    except (NameError, TypeError, KeyError):
+        log_output_error("Configuration file is corrupted.");
+        log_output_info("Please edit file or delete corrupted file to create new configuration on restart of server.");
+        
+    log_output_system("Server has been stopped ...");
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,40 @@
 import asyncio
 import websockets
+import xml.etree.ElementTree as ET 
+from xml.etree.ElementTree import Element, SubElement
+from websockets import AbortHandshake
+
+################################ Configuration
+def load_configuration(path):
+    result = dict();
+    configFile = ET.parse(path);
+    root = configFile.getroot();
+    if str(root.tag) == "configuration":
+        for child in root:
+            if str(child.tag) == "output_format":
+                value = str(child.text);
+                if value == "xml" or value == "csv":
+                    result[child.tag] = value;
+            if str(child.tag) == "server_address":
+                value = str(child.text);
+                result[child.tag] = value;
+        return result;
+    return -1;
+
+def create_configuration(path, config):
+    root = Element('configuration');
+    for key in config:
+        child = SubElement(root, key);
+        child.text = config[key];
+    tree = ET.ElementTree(root);
+    tree.write(path);
+    
+def create_default_configuration_object():
+    config = dict();
+    config["output_format"] = "xml";
+    config["server_address"] = "ws://localhost:1511";
+    return config;
+    
 ################################ Used for SIMPLE user choices (with one index)
 def get_possible_choices(message):
    results = list()
@@ -26,8 +61,15 @@ def get_user_input(possible_choices):
    return index
 ################################ Requests a connection abort
 async def close_connection(websocket):
-    print("Program shutting down...");
-    await websocket.send("-1:")
+    remoteAddress = str(websocket.remote_address[0]) + ":" + str(websocket.remote_address[1]);
+    await websocket.send("-1:");
+    response = await websocket.recv();
+    if int(response) == -1:
+        print("Connection to '" + remoteAddress + "' closed.");
+    else:
+        print("Error on closing connection to '" + remoteAddress + "'");
+        print("Connection reset manually");
+        await websocket.close();
     
 ################################ User input for data selection
 def get_data_selection(message):
@@ -122,7 +164,8 @@ def prepare_data(data):
 ################################ Client
 async def connect_to(websocket_address):
     async with websockets.connect(websocket_address) as websocket:
-        print("Program starting...");
+        remoteAddress = str(websocket.remote_address[0]) + ":" + str(websocket.remote_address[1]);
+        print("Established connection to: " + remoteAddress);
         print("Note: Enter '-1' at any time to shutdown program immediately.");
         await websocket.send("1:")                          # Message to establish the connection
         response = await websocket.recv()                   # Welcome message
@@ -188,7 +231,25 @@ async def connect_to(websocket_address):
         return;
 
 def main():
-    asyncio.get_event_loop().run_until_complete(connect_to('ws://localhost:1511'))
+    print("Program is starting ...");
+    path = "client_config.xml";
+    try:
+        print("Loading configuration ..." + path);
+        config = load_configuration(path);
+        asyncio.get_event_loop().run_until_complete(connect_to(config["server_address"]));
+    except FileNotFoundError:
+        print("No configuration file was found.");
+        print("Creating new configuration file at '" + path + "' ...");
+        print("Please edit configuration file and restart program.");
+        config = create_default_configuration_object();
+        create_configuration(path, config);
+    except (NameError, TypeError, KeyError):
+        print("Configuration file is corrupted.");
+        print("Please edit file or delete corrupted file to create new configuration on restart of server.");
+    except Exception:
+        print("An error ocured while connecting to server. Make sure server is accessable.");
+        
+    print("Program shutting down...");
 
 if __name__ == "__main__":
     main()
