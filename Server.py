@@ -64,7 +64,7 @@ def parse_element(root, tree_path, stage):
             element_name = element.get("name")
             if "attribute" in element.tag:          # Attribute
                 attribute_status = ":Attribute"
-            if stage != 1:                          # Root is on stage 1 and will be ignored
+            if stage != 1:  # Root is on stage 1 and will be ignored
                 data.append(element_name+":"+str(stage)+":"+str(has_subelements)+attribute_status)
             if root.findall(temp+"/*"):             # If this elements has subelements, another call has to be done
                 data += parse_element(root, temp, stage+1)
@@ -177,7 +177,7 @@ async def echo(websocket, path):
             await websocket.send(response)
         elif message_id == 2:                       # User selected a file
             file_index = int(message_content[1])
-            path = "Dateien/"+files[file_index] # Set path to file
+            path = "Dateien/"+files[file_index]     # Set path to file
             data = scan_schema(path)                # Scans the selected file
             response = "Select the data you want to collect:"
             counter = 1

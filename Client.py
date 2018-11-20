@@ -40,10 +40,10 @@ def get_possible_choices(message):
    results = list()
    temp_list = message.split(":")[1].split("\n")            # Splitting message from possible choices
    for temp in temp_list:
-      if temp:                                              # Checking for empty string
+      if temp:                                              # Checking for empty strings
          results.append(temp.split(" ")[1])                 # Removing the number
    return results
-################################ Check a SINGLE the user input
+################################ Checks a SINGLE user input
 def get_user_input(possible_choices):
    index = 0
    while(True):
@@ -75,9 +75,11 @@ async def close_connection(websocket):
 def get_data_selection(message):
     results = list()
     temp_list = message.split(":", 1)[1].split("\n")
+    newIndex = 1
     for temp in temp_list:
-        if temp:
-            print(temp.split(":")[0])
+        if temp and temp.split(":")[2] != "True":       # Selecting complex elements ia nor supported
+            print("["+str(newIndex)+"] "+temp.split(":")[0].split(" ")[1])
+            newIndex += 1
             results.append(temp.split(":")[0].split(" ")[1])
     index = 0
     user_selection = dict()
@@ -88,9 +90,7 @@ def get_data_selection(message):
                 raise IndexError()
             elif index >= 0:
                 results[index]                          # Raises errors, if invalid
-                value = ""
-                if temp_list[index + 1].split(":")[2] == "False":
-                    value = input("\nEnter value for "+results[index]+"(leave empty, if not desired): ")
+                value = input("\nEnter value for "+results[index]+"(leave empty, if not desired): ")
                 user_selection[results[index]] = value.strip()
             elif index == -2:
                 return index;
@@ -138,16 +138,12 @@ def prepare_data(data):
             while a < len(buffer):
                 if parents[-1][0] in buffer[a]:             # Attributes must be appended to the parent element
                     text = input(element_name+":")
-                    if int(text) == -1:
-                        return -2;
                     buffer[a] = buffer[a][:-1]+" "+element_name+"=\""+text+"\">"
                     break
                 a += 1
         elif has_subelements == "False":                    # Element does not have subelement => will be closed
             stages.pop()
             text = input(element_name+":")
-            if int(text) == -1:
-                return -2;
             buffer.append("<"+element_name+">"+text+"</"+element_name+">")
         else:                                               # Element has nested subelements
             parents.append(line_data)
@@ -166,7 +162,7 @@ async def connect_to(websocket_address):
     async with websockets.connect(websocket_address) as websocket:
         remoteAddress = str(websocket.remote_address[0]) + ":" + str(websocket.remote_address[1]);
         print("Established connection to: " + remoteAddress);
-        print("Note: Enter '-1' at any time to shutdown program immediately.");
+        print("Note: Enter '-1' to shutdown the program immediately.");
         await websocket.send("1:")                          # Message to establish the connection
         response = await websocket.recv()                   # Welcome message
         print(response)
@@ -177,7 +173,7 @@ async def connect_to(websocket_address):
             return;
         print("Retrieving data from "+possible_choices[index])
         await websocket.send("2:"+str(index))
-        response = await websocket.recv()     # Gets available data for choosen file  
+        response = await websocket.recv()                   # Gets available data for choosen file  
         test = get_data_selection(response)
         if test == -2:
             await close_connection(websocket);
@@ -221,9 +217,6 @@ async def connect_to(websocket_address):
             if m != "":
                 data.append(m)
         message = prepare_data(data)
-        if int(message) == -2:
-            await close_connection(websocket);
-            return;
         await websocket.send("7:"+message)
         response = await websocket.recv()
         print(response)
