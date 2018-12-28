@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"> 
+	<xsd:element name="Employees">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Employee" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="Firstname" type="xsd:string" />
+							<xsd:element name="Lastname" type="xsd:string" />
+							<xsd:element name="Birtyear" type="xsd:integer" />
+							<xsd:element name="Recruitment_year" type="xsd:integer" />
+							<xsd:element name="Field_of_work" type="xsd:string" />
+							<xsd:element name="Salary" type="xsd:integer" />
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>			
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

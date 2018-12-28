@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Bookstore>
+		<Book>
+			<Title>Snowman</Title>
+			<Author>Carl Morgan</Author>
+			<Year>2015</Year>
+			<Price>18.99</Price>
+		</Book>
+		<Book>
+			<Title>Sunrise</Title>
+			<Author>Kate Winston</Author>
+			<Year>2011</Year>
+			<Price>12.49</Price>
+		</Book>
+		<Book>
+			<Title>Black Prisma</Title>
+			<Author>Otto Krueger</Author>
+			<Year>1997</Year>
+			<Price>9.01</Price>
+		</Book>
+</Bookstore>

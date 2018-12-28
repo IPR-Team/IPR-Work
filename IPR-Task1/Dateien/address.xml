@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Adresslist>
+	<Address>
+		<Title>Sir</Title>
+		<Firstname>Lucas</Firstname>
+		<Lastname>Wall</Lastname>
+		<Street>Brooklin 99</Street>
+		<Zipcode>52351</Zipcode>
+		<City>New York</City>
+	</Address>
+	<Address>
+		<Title>Sir</Title>
+		<Firstname>Henry</Firstname>
+		<Lastname>Logan</Lastname>
+		<Street>Westminster 10</Street>
+		<Zipcode>13516</Zipcode>
+		<City>London</City>
+	</Address>
+	<Address>
+		<Title>Madame</Title>
+		<Firstname>Lauren</Firstname>
+		<Lastname>Strauss</Lastname>
+		<Street>Karl Marx 10</Street>
+		<Zipcode>11680</Zipcode>
+		<City>Hannover</City>
+	</Address>
+</Adresslist>

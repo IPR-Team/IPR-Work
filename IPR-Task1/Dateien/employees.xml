@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Employees>
+		<Employee>
+			<Firstname>Arthur</Firstname>
+			<Lastname>Buck</Lastname>
+			<Birtyear>1967</Birtyear>
+			<Recruitment_year>1998</Recruitment_year>
+			<Field_of_work>Marketing</Field_of_work>
+			<Salary>2300</Salary>
+		</Employee>
+		<Employee>
+			<Firstname>Leslie</Firstname>
+			<Lastname>Willfred</Lastname>
+			<Birtyear>1988</Birtyear>
+			<Recruitment_year>2010</Recruitment_year>
+			<Field_of_work>Administration</Field_of_work>
+			<Salary>1900</Salary>
+		</Employee>
+		<Employee>
+			<Firstname>Collin</Firstname>
+			<Lastname>Mann</Lastname>
+			<Birtyear>1971</Birtyear>
+			<Recruitment_year>2000</Recruitment_year>
+			<Field_of_work>Production</Field_of_work>
+			<Salary>2050</Salary>
+		</Employee>
+</Employees>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"> 
+	<xsd:element name="Bookstore">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Book" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="Title" type="xsd:string" />
+							<xsd:element name="Author" type="xsd:string" />
+							<xsd:element name="Year" type="xsd:integer" />
+							<xsd:element name="Price" type="xsd:double" />
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
