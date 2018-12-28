@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="mainController.js"></script>
+    <script type="text/javascript" src="SearchManager.js"></script>
+  </head>
+  <body>
+    <h2>Search for Projects:</h2>
+    <input id="input" type="text" name="" value="">
+    <button onclick="searchButtonClicked()">Search</button>
+    <br/>
+    <label>Last searched:</label>
+    <p id="lastSearchedOutput">Error!</p>
+    <br/>
+    <table style="width:100%" id="resultTable">
+      <tbody>
+        <tr>
+          <th>Name</th>
+          <th>Brief</th>
+          <th>Url</th>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
