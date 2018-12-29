@@ -1,4 +1,4 @@
-function pullBitBucketRepositories(searchString){
+function pullGitLabRepositories(searchString){
   const Http = new XMLHttpRequest();
   const url = "";
   Http.open("GET", url);

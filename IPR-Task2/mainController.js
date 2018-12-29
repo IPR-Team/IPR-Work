@@ -39,7 +39,28 @@ function fillTable(){
   createdDataCounter++;
 }
 
+function checkBoxIsActivated(id){
+  if(document.getElementById(id).value === "yes"){
+    return 1;
+  }
+  return 0;
+}
+
 function searchButtonClicked(){
-  searchForProjects();
+  var sources = new Array();
+  if(checkBoxIsActivated("bitBucketCheckbox") === 1){
+    sources.push("BitBucket");
+  }
+  if(checkBoxIsActivated("gitHubCheckbox") === 1){
+    sources.push("GitHub");
+  }
+  if(checkBoxIsActivated("gitLabCheckBox") === 1){
+    sources.push("GitLab");
+  }
+  alert(sources);
+  var inputString = document.getElementById("input").value;
+  document.getElementById("input").value = "";
+  document.getElementById("lastSearchedOutput").innerHTML = inputString;
+  searchForProjects(inputString, sources);
   fillTable();
 }
