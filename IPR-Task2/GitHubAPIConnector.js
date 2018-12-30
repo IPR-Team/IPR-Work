@@ -26,9 +26,7 @@ function parseJSONToProjects(jsonString){
 
 function processDescription(description){
   if(description != null){
-    alert(description);
     description = description.replace(/[\s\r\n\t]+/g, " ");
-    alert(description);
   }
   return description;
 }
@@ -42,15 +40,17 @@ function parseObjectToProjectData(object){
   //Anzahl beteiligte Personen/Orgnaisationen (Contributors)
   //Projektseite/Homepage außerhalb repo
   var project = {};
-  project.name = object.name;
+  project.general = {};
+  project.general.name = object.name;
+  project.general.url = object.html_url;
   project.description = processDescription(object.description);
   project.source = "GitHub";
   project.last_updated = object.updated_at;
-  project.owner = object.owner.login;
+  project.owner = {};
+  project.owner.name = object.owner.login;
+  project.owner.url = object.owner.html_url;
+  project.owner.image = object.owner.avatar_url;
   project.amount_contributors = 0;
   project.external_homepage = "http://";
-  //object.owner.avatar_url -> Profpic
-  //object.owner.html_url -> Link to profil
-  //object.html_url -> Link to repository
   return project;
 }

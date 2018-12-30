@@ -1,7 +1,7 @@
 var rowCounter = -1;
 var createdDataCounter = 0;
 
-function addElementToTable(name, description, source, last_updated, owner, amount_contributors, external_homepage){
+function addElementToTable(general, description, source, last_updated, owner, amount_contributors, external_homepage){
   rowCounter++;
   var newRow = document.createElement("tr");
   newRow.setAttribute("id", "row".concat(rowCounter));
@@ -10,7 +10,7 @@ function addElementToTable(name, description, source, last_updated, owner, amoun
   numberElement.innerHTML = rowCounter;
 
   var nameElement = document.createElement("td");
-  nameElement.innerHTML = name;
+  nameElement.innerHTML = general.name.concat("<br/>", general.url);
 
   var descriptionElement = document.createElement("td");
   descriptionElement.innerHTML = description;
@@ -22,7 +22,13 @@ function addElementToTable(name, description, source, last_updated, owner, amoun
   lastUpdatedElement.innerHTML = last_updated;
 
   var ownerElement = document.createElement("td");
-  ownerElement.innerHTML = owner;
+  var userDescription = document.createElement("p");
+  var image = document.createElement("img");
+  image.setAttribute("src", owner.image);
+  image.setAttribute("id", "picture");
+  userDescription.innerHTML = owner.name.concat("<br/>", owner.url);
+  ownerElement.appendChild(image);
+  ownerElement.appendChild(userDescription);
 
   var amountContributorsElement = document.createElement("td");
   amountContributorsElement.innerHTML = amount_contributors;
@@ -43,7 +49,7 @@ function addElementToTable(name, description, source, last_updated, owner, amoun
 
 //Will be accessed by connectors!
 function addProjectToTable(project){
-  addElementToTable(project.name, project.description, project.source, project.last_updated,
+  addElementToTable(project.general, project.description, project.source, project.last_updated,
     project.owner, project.amount_contributors, project.external_homepage);
 }
 
