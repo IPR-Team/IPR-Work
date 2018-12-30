@@ -4,7 +4,8 @@
     <script type="text/javascript" src="mainController.js"></script>
     <script type="text/javascript" src="SearchManager.js"></script>
     <script type="text/javascript" src="BitBucketAPIConnector.js"></script>
-    <script type="text/javascript" src="GitHubConnector.js"></script>
+    <script type="text/javascript" src="GitHubAPIConnector.js"></script>
+    <script type="text/javascript" src="GitLabAPIConnector.js"></script>
     <link rel="stylesheet" href="main.css">
     <meta charset="utf-8">
     <title>Project Search 1.2</title>
@@ -14,15 +15,15 @@
     <h3>Choose data source:</h3>
     <ul id="checkBoxList">
       <li>
-        <input id="bitBucketCheckbox" type="checkbox" value="yes">
+        <input id="bitBucketCheckbox" type="checkbox" value="no">
         <label>BitBucket</label>
       </li>
       <li>
-        <input id="gitHubCheckbox" type="checkbox" value="yes">
+        <input id="gitHubCheckbox" type="checkbox" value="no">
         <label>GitHub</label>
       </li>
       <li>
-        <input id="gitLabCheckBox" type="checkbox" value="yes">
+        <input id="gitLabCheckBox" type="checkbox" value="no">
         <label>GitLab</label>
       </li>
     </ul>
@@ -30,17 +31,22 @@
     <input id="input" type="text" name="" value="">
     <button onclick="searchButtonClicked()">Search</button>
     <br/>
-    <label>Last searched:</label>
-    <p id="lastSearchedOutput">Error!</p>
-    <br/>
-    <table style="width:100%" id="resultTable">
-      <tbody>
-        <tr>
-          <th>Name</th>
-          <th>Brief</th>
-          <th>Url</th>
-        </tr>
-      </tbody>
-    </table>
+    <div id="resultArea" style="display: none;">
+      <h4><span>Results for: '<label id="lastSearchedOutput">Error!</label>'</span></h4>
+      <table style="width:100%">
+        <tbody id="resultTable">
+          <tr>
+            <th>number</th>
+            <th>name</th>
+            <th>description</th>
+            <th>source</th>
+            <th>last updated</th>
+            <th>owner</th>
+            <th>amount contributors</th>
+            <th>external homepage</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </body>
 </html>

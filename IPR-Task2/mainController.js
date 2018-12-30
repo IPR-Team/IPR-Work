@@ -1,20 +1,50 @@
 var rowCounter = -1;
 var createdDataCounter = 0;
 
-function addNewElementToTable(name, brief, url){
+function addElementToTable(name, description, source, last_updated, owner, amount_contributors, external_homepage){
   rowCounter++;
   var newRow = document.createElement("tr");
   newRow.setAttribute("id", "row".concat(rowCounter));
+
+  var numberElement = document.createElement("td");
+  numberElement.innerHTML = rowCounter;
+
   var nameElement = document.createElement("td");
   nameElement.innerHTML = name;
-  var briefElement = document.createElement("td");
-  briefElement.innerHTML = brief;
-  var urlElement = document.createElement("td");
-  urlElement.innerHTML = url;
+
+  var descriptionElement = document.createElement("td");
+  descriptionElement.innerHTML = description;
+
+  var sourceElement = document.createElement("td");
+  sourceElement.innerHTML = source;
+
+  var lastUpdatedElement = document.createElement("td");
+  lastUpdatedElement.innerHTML = last_updated;
+
+  var ownerElement = document.createElement("td");
+  ownerElement.innerHTML = owner;
+
+  var amountContributorsElement = document.createElement("td");
+  amountContributorsElement.innerHTML = amount_contributors;
+
+  var externalHomepageElement = document.createElement("td");
+  externalHomepageElement.innerHTML = external_homepage;
+
+  newRow.appendChild(numberElement);
   newRow.appendChild(nameElement);
-  newRow.appendChild(briefElement);
-  newRow.appendChild(urlElement);
+  newRow.appendChild(descriptionElement);
+  newRow.appendChild(sourceElement);
+  newRow.appendChild(lastUpdatedElement);
+  newRow.appendChild(ownerElement);
+  newRow.appendChild(amountContributorsElement);
+  newRow.appendChild(externalHomepageElement);
   document.getElementById("resultTable").appendChild(newRow);
+}
+
+//Will be accessed by connectors!
+function addProjectToTable(project){
+  addElementToTable(project.name, project.description, project.source, project.last_updated,
+    project.owner, project.amount_contributors, project.external_homepage);
 }
 
 function deleteOldTableEntries(){
@@ -27,40 +57,35 @@ function deleteOldTableEntries(){
   }
 }
 
-function fillTable(){
-  deleteOldTableEntries();
-  addNewElementToTable("test name".concat(createdDataCounter), "test brief", "test url");
-  createdDataCounter++;
-  addNewElementToTable("test name".concat(createdDataCounter), "test brief", "test url");
-  createdDataCounter++;
-  addNewElementToTable("test name".concat(createdDataCounter), "test brief", "test url");
-  createdDataCounter++;
-  addNewElementToTable("test name".concat(createdDataCounter), "test brief", "test url");
-  createdDataCounter++;
+function processSearchString(searchString){
+  var newSearchString = searchString.replace(/[^\w\d]+/g," ");
+  newSearchString = newSearchString.trim().toLowerCase();
+  newSearchString = newSearchString.replace(/\s+/g,"+");
+  return newSearchString;
 }
 
-function checkBoxIsActivated(id){
-  if(document.getElementById(id).value === "yes"){
-    return 1;
+function activateResultTable(){
+  var table = document.getElementById("resultArea");
+  if(table.style.display === "none"){
+    table.style.display = "block";
   }
-  return 0;
 }
 
 function searchButtonClicked(){
   var sources = new Array();
-  if(checkBoxIsActivated("bitBucketCheckbox") === 1){
+  if(document.getElementById("bitBucketCheckbox").checked == true){
     sources.push("BitBucket");
   }
-  if(checkBoxIsActivated("gitHubCheckbox") === 1){
+  if(document.getElementById("gitHubCheckbox").checked == true){
     sources.push("GitHub");
   }
-  if(checkBoxIsActivated("gitLabCheckBox") === 1){
+  if(document.getElementById("gitLabCheckBox").checked == true){
     sources.push("GitLab");
   }
-  alert(sources);
-  var inputString = document.getElementById("input").value;
+  var searchString = document.getElementById("input").value;
   document.getElementById("input").value = "";
-  document.getElementById("lastSearchedOutput").innerHTML = inputString;
-  searchForProjects(inputString, sources);
-  fillTable();
+  document.getElementById("lastSearchedOutput").innerHTML = searchString;
+  searchString = processSearchString(searchString);
+  activateResultTable();
+  searchForProjects(searchString, sources);
 }

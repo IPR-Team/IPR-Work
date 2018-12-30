@@ -1,5 +1,6 @@
 function searchForProjects(searchString, sources){
   var srcLength = sources.length;
+  var allProjects = [];
   if(srcLength > 0){
     for(i = 0; i < srcLength; i++){
       if(sources[i] === "BitBucket"){
@@ -11,4 +12,5 @@ function searchForProjects(searchString, sources){
       }
     }
   }
+  return 0;
 }
