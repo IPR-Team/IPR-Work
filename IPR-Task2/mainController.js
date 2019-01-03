@@ -1,5 +1,6 @@
 var rowCounter = -1;
 var createdDataCounter = 0;
+var projects = [];
 
 function addElementToTable(general, description, source, last_updated, owner, amount_contributors, external_homepage){
   rowCounter++;
@@ -51,6 +52,15 @@ function addElementToTable(general, description, source, last_updated, owner, am
 function addProjectToTable(project){
   addElementToTable(project.general, project.description, project.source, project.last_updated,
     project.owner, project.amount_contributors, project.external_homepage);
+    //save porjects in ram for later proposals?
+}
+
+function matchAndSortProjects(projectList){
+  projectList.sort(function(a, b){ return a.last_updated < b.last_updated });
+  for(i = 0; i < projectList.length; i++){
+    addProjectToTable(projectList[0]);
+    projectList.shift();
+  }
 }
 
 function deleteOldTableEntries(){
@@ -77,21 +87,33 @@ function activateResultTable(){
   }
 }
 
+function toggleSearchingIndicator(){
+  var searchingIndicator = document.getElementById("resultArea");
+  if(searchingIndicator.style.display === "none"){
+    searchingIndicator.style.display = "block";
+  }else{
+    searchingIndicator.style.display = "none";
+  }
+}
+
 function searchButtonClicked(){
-  var sources = new Array();
-  if(document.getElementById("bitBucketCheckbox").checked == true){
-    sources.push("BitBucket");
-  }
-  if(document.getElementById("gitHubCheckbox").checked == true){
-    sources.push("GitHub");
-  }
-  if(document.getElementById("gitLabCheckBox").checked == true){
-    sources.push("GitLab");
+  var source;
+  //ein Repository gleichzeitig auch möglich -> Radiobuttons
+  if(document.getElementById("bitBucketRadioButton").checked == true){
+    source = "BitBucket";
+  }else if(document.getElementById("gitHubRadioButton").checked == true){
+    source = "GitHub";
+  }else if(document.getElementById("gitLabRadioButton").checked == true){
+    source = "GitLab";
   }
   var searchString = document.getElementById("input").value;
   document.getElementById("input").value = "";
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   searchString = processSearchString(searchString);
-  activateResultTable();
-  searchForProjects(searchString, sources);
+  searchForProjects(searchString, source, function(e){
+    toggleSearchingIndicator(); //off
+    activateResultTable();
+    matchAndSortProjects(e);
+  });
+  toggleSearchingIndicator(); //on
 }

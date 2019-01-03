@@ -1,19 +1,36 @@
 const Http = new XMLHttpRequest();
 
-function pullGitHubRepositories(searchString){
+function pullGitHubRepositories(searchString, callBack){
+  console.log("Pulling GitHub repositorys now");
   url = "https://api.github.com/search/repositories";
   query = "?q=".concat(searchString);
   sort = "&sort=updated"
   url = url.concat(query,sort);
-  var projects = [];
-  Http.open("GET", url);
-  Http.send();
-
-  Http.onreadystatechange=(e)=>{
-    if(Http.readyState === 4 && Http.status === 200 ){
-        projects.push(parseJSONToProjects(Http.responseText));
+  pullProjectResponse = [];
+  console.log("Created url");
+  fetch(url)
+  .then(function(response){
+    //console.log(response.readyState);
+    if(response.ok){
+      console.log(response);
+      return response.json();
+    }else{
+      throw new Error("Search results konnte nicht geladen werden!");
     }
-  }
+  })
+  .then(function(jsonString){
+    console.log(jsonString);
+    var object = jsonString.items;
+
+    for(i = 0; i < object.length; i++){ //jsonObject.length || JSON.parse(jsonString).total_count
+      console.log(object[i]);
+      pullProjectResponse.push(parseObjectToProjectData(object[i]));
+    }
+    callBack(pullProjectResponse);
+  }).
+  catch(function(error){
+    console.log(error);
+  });
 }
 
 function parseJSONToProjects(jsonString){

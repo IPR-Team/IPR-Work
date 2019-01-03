@@ -13,20 +13,15 @@
   <body>
     <h1>Project Search 1.2</h1>
     <h3>Choose data source:</h3>
-    <ul id="checkBoxList">
-      <li>
-        <input id="bitBucketCheckbox" type="checkbox" value="no">
-        <label>BitBucket</label>
-      </li>
-      <li>
-        <input id="gitHubCheckbox" type="checkbox" value="no">
-        <label>GitHub</label>
-      </li>
-      <li>
-        <input id="gitLabCheckBox" type="checkbox" value="no">
-        <label>GitLab</label>
-      </li>
-    </ul>
+    <div>
+      <!--TODO: set checked unique and repeatly-->
+      <input id="bitBucketRadioButton" name="source" type="radio" value="no">
+      <label for="bitBucketRadioButton">BitBucket</label></br>
+      <input id="gitHubRadioButton" name="source" type="radio" value="no" checked="checked">
+      <label for="gitHubRadioButton">GitHub</label></br>
+      <input id="gitLabRadioButton" name="source" type="radio" value="no">
+      <label for="gitLabRadioButton">GitLab</label>
+    </div>
     <h3>Search for Projects:</h3>
     <input id="input" type="text" name="" value="">
     <button onclick="searchButtonClicked()">Search</button>
@@ -47,6 +42,9 @@
           </tr>
         </tbody>
       </table>
+    </div>
+    <div id="searchingIndicator" style="display: none;">
+      <p>Searching...</p>
     </div>
   </body>
 </html>
