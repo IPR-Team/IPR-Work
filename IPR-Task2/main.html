@@ -1,50 +1,64 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script type="text/javascript" src="mainController.js"></script>
-    <script type="text/javascript" src="SearchManager.js"></script>
-    <script type="text/javascript" src="BitBucketAPIConnector.js"></script>
-    <script type="text/javascript" src="GitHubAPIConnector.js"></script>
-    <script type="text/javascript" src="GitLabAPIConnector.js"></script>
-    <link rel="stylesheet" href="main.css">
-    <meta charset="utf-8">
-    <title>Project Search 1.2</title>
-  </head>
-  <body>
-    <h1>Project Search 1.2</h1>
-    <h3>Choose data source:</h3>
-    <div>
-      <!--TODO: set checked unique and repeatly-->
-      <input id="bitBucketRadioButton" name="source" type="radio" value="no">
-      <label for="bitBucketRadioButton">BitBucket</label></br>
-      <input id="gitHubRadioButton" name="source" type="radio" value="no" checked="checked">
-      <label for="gitHubRadioButton">GitHub</label></br>
-      <input id="gitLabRadioButton" name="source" type="radio" value="no">
-      <label for="gitLabRadioButton">GitLab</label>
-    </div>
-    <h3>Search for Projects:</h3>
-    <input id="input" type="text" name="" value="">
-    <button onclick="searchButtonClicked()">Search</button>
-    <br/>
-    <div id="resultArea" style="display: none;">
-      <h4>Results for: '<label id="lastSearchedOutput">Error!</label>'</h4>
-      <table style="width:100%">
-        <tbody id="resultTable">
-          <tr>
-            <th>number</th>
-            <th>name</th>
-            <th>description</th>
-            <th>source</th>
-            <th>last updated</th>
-            <th>owner</th>
-            <th>amount contributors</th>
-            <th>external homepage</th>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div id="searchingIndicator" style="display: none;">
-      <p>Searching...</p>
-    </div>
-  </body>
+	<head>
+		<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet"> 
+		<script type="text/javascript" src="mainController.js"></script>
+		<script type="text/javascript" src="SearchManager.js"></script>
+		<script type="text/javascript" src="BitBucketAPIConnector.js"></script>
+		<script type="text/javascript" src="GitHubAPIConnector.js"></script>
+		<script type="text/javascript" src="GitLabAPIConnector.js"></script>
+		<link rel="stylesheet" href="main.css">
+		<meta charset="utf-8">
+		<title>Project Search</title>
+	</head>
+	<body>
+		<header>
+			<h1>Project Search</h1>
+			<div class="topbar"/>
+		</header>
+		<div class="container">
+		<h3>Choose data source:</h3>
+		<form>
+			<div>
+				<!--TODO: set checked unique and repeatly-->
+				<input class="form-radio" id="bitBucketRadioButton" name="source" type="radio" value="no">
+				<label for="bitBucketRadioButton">BitBucket</label></br>
+			</div>
+			<div class="radioGroup">
+				<input class="form-radio" id="gitHubRadioButton" name="source" type="radio" value="no" checked="checked">
+				<label for="gitHubRadioButton">GitHub</label></br>
+			</div>
+			<div class="radioGroup">
+				<input class="form-radio" id="gitLabRadioButton" name="source" type="radio" value="no">
+				<label for="gitLabRadioButton">GitLab</label>
+			</div>
+		</form>
+		<h3>Search for projects:</h3>
+		<div class="project-search">
+			<input id="input" type="text" name="" value="" placeholder="Project name...">
+			<button onclick="searchButtonClicked()">Search</button>
+		</div>
+		<br/>
+		<div id="resultArea" style="display: none;">
+			<h4>Results for: '<label id="lastSearchedOutput">Error!</label>'</h4>
+			<table style="width:100%">
+				<tbody id="resultTable">
+					<tr>
+						<th>Number</th>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Source</th>
+						<th>Last updated</th>
+						<th>Owner</th>
+						<th>Amount contributors</th>
+						<th>External homepage</th>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div id="searchingIndicator" style="display: none;">
+			<p>Searching...</p>
+		</div>
+		</div>
+	</body>
 </html>

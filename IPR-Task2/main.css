@@ -1,12 +1,22 @@
 body {
+	margin: 0;
+	padding: 0;
 	background: #005C97;  /* standard for old browser */
 	background: -webkit-linear-gradient(to right, #363795, #005C97);  /* used by old versions of Chrome and Safari */
 	background: linear-gradient(to right, #363795, #005C97); /* used by up to date versions of browsers */
+}
 
+.topbar {
+	background-color: #131418;
+	height: 5px;
+}
+
+.container {
+	margin: 15px;
 }
 
 h1, h3, h4, th, td, body, label{
-	font-family: sans-serif;
+	font-family: 'Source Sans Pro', sans-serif;
 	color: white;
 }
 
@@ -29,12 +39,22 @@ label:not(#lastSearchedOutput) {
   width:64px;
   height:64px;
 }
-
+header > h1 {
+	background: #243b55;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 20px;
+	margin-top: 0;
+	margin-bottom: 0;
+	text-transform: uppercase;
+	font-weight: 100;
+	letter-spacing: 2px;
+}
 h4 {
 	font-size: 30px; 
 	font-weight: normal; 
 	line-height: 32px; 
-	margin: 0 0 72px; 
+	margin: 0 0 32px; 
 	text-align: center;
 }
 
@@ -54,10 +74,49 @@ th {
 }
 
 td {
-	background-color: rgba(255,255,255,0.2);
-	border-bottom: 2px solid white;
+	background-color: rgba(255,255,255,0.15);
+	border-bottom: 1px solid white;
 }
 
 tr:not(:first-child):hover {
-	background-color: rgba(255,255,255,0.3);
+	background-color: rgba(255,255,255,0.1);
+}
+
+.project-search {
+	width: 500px;
+	height: 40px;
+	background: #444;	/* fallback */
+	background: rgba(0,0,0,.2);
+	border: 1px solid white;
+}
+
+.project-search input {
+	width: 370px;
+	padding: 10px 5px;
+	float: left;
+	color: white;
+	border: 0;
+	background: transparent;
+	border-radius: 3px 0 0 3px;
+}
+
+.project-search button {
+	position: relative;
+	float: right;
+	border: 0;
+	padding: 0;
+	cursor: pointer;
+	height: 40px;
+	width: 120px;
+	color: white;
+	background: transparent;
+	border-left: 1px solid white;
+}   
+
+.project-search button:hover {
+	background: white;
+	color:black;
+}
+.project-search button:focus {
+	outline: 0;
 }
