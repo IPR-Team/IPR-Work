@@ -1,8 +1,28 @@
+body {
+	background: #005C97;  /* standard for old browser */
+	background: -webkit-linear-gradient(to right, #363795, #005C97);  /* used by old versions of Chrome and Safari */
+	background: linear-gradient(to right, #363795, #005C97); /* used by up to date versions of browsers */
+
+}
+
+h1, h3, h4, th, td, body, label{
+	font-family: sans-serif;
+	color: white;
+}
+
 #checkBoxList {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+label:not(#lastSearchedOutput) {
+	display: inline-block;
+	width: 100px;
+	height: 20px;
+    padding: 0px 15px;
+	cursor: pointer;
 }
 
 #picture {
@@ -11,14 +31,33 @@
 }
 
 h4 {
-   width: 100%;
-   text-align: center;
-   border-bottom: 1px solid #000;
-   line-height: 0.1em;
-   margin: 10px 0 20px;
+	font-size: 30px; 
+	font-weight: normal; 
+	line-height: 32px; 
+	margin: 0 0 72px; 
+	text-align: center;
 }
 
-h4 span {
-    background:#fff;
-    padding:0 10px;
+table {
+	box-shadow: 0 0 20px rgba(0,0,0,0.4);
+	border-collapse: collapse;
+}
+
+th, td {
+	padding: 10px;
+	text-align: left;
+	font-size: 14px; 
+}
+
+th {
+	background-color: #344d82;
+}
+
+td {
+	background-color: rgba(255,255,255,0.2);
+	border-bottom: 2px solid white;
+}
+
+tr:not(:first-child):hover {
+	background-color: rgba(255,255,255,0.3);
 }
