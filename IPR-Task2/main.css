@@ -1,36 +1,37 @@
 body {
+	height: 100%;
 	margin: 0;
 	padding: 0;
-	background: #005C97;  /* standard for old browser */
-	background: -webkit-linear-gradient(to right, #363795, #005C97);  /* used by old versions of Chrome and Safari */
-	background: linear-gradient(to right, #363795, #005C97); /* used by up to date versions of browsers */
+	background: #4f2b6f;  /* standard for old browser */
+	background: -webkit-linear-gradient(to bottom, #4f2b6f, #82344d);  /* used by old versions of Chrome and Safari */
+	background: linear-gradient(to bottom, #4f2b6f, #82344d); /* used by up to date versions of browsers */
+	background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .topbar {
-	background-color: #131418;
+	background-color: #06090f;
 	height: 5px;
 }
-
-.container {
+.body-container {
 	margin: 15px;
+}
+.radio-group {
+	width: 200px;
+	margin: 10px;
+	display: flex;
 }
 
 h1, h3, h4, th, td, body, label{
-	font-family: 'Source Sans Pro', sans-serif;
+	font-family: 'Nunito', sans-serif;
 	color: white;
-}
-
-#checkBoxList {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-	overflow: hidden;
 }
 
 label:not(#lastSearchedOutput) {
 	display: inline-block;
-	width: 100px;
-	height: 20px;
+	width: 100%;
+	height: 100%;
+	margin: auto;
     padding: 0px 15px;
 	cursor: pointer;
 }
@@ -38,9 +39,11 @@ label:not(#lastSearchedOutput) {
 #picture {
   width:64px;
   height:64px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.8);
 }
+
 header > h1 {
-	background: #243b55;
+	background: #1e2d4b;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	padding-left: 20px;
@@ -49,13 +52,13 @@ header > h1 {
 	text-transform: uppercase;
 	font-weight: 100;
 	letter-spacing: 2px;
+	
+	text-shadow: 2px 2px 0px #131418;
 }
+
 h4 {
-	font-size: 30px; 
 	font-weight: normal; 
-	line-height: 32px; 
-	margin: 0 0 32px; 
-	text-align: center;
+	text-align: left;
 }
 
 table {
@@ -89,7 +92,6 @@ tr:not(:first-child):hover {
 	background: rgba(0,0,0,.2);
 	border: 1px solid white;
 }
-
 .project-search input {
 	width: 370px;
 	padding: 10px 5px;
@@ -99,7 +101,6 @@ tr:not(:first-child):hover {
 	background: transparent;
 	border-radius: 3px 0 0 3px;
 }
-
 .project-search button {
 	position: relative;
 	float: right;
@@ -112,7 +113,6 @@ tr:not(:first-child):hover {
 	background: transparent;
 	border-left: 1px solid white;
 }   
-
 .project-search button:hover {
 	background: white;
 	color:black;

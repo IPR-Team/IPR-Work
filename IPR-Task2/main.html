@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet"> 
+		<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet"> 
 		<script type="text/javascript" src="mainController.js"></script>
 		<script type="text/javascript" src="SearchManager.js"></script>
 		<script type="text/javascript" src="BitBucketAPIConnector.js"></script>
@@ -16,20 +16,20 @@
 			<h1>Project Search</h1>
 			<div class="topbar"/>
 		</header>
-		<div class="container">
-		<h3>Choose data source:</h3>
+		<div class="body-container">
+		<h3>Select the data source:</h3>
 		<form>
-			<div>
+			<div class="radio-group">
 				<!--TODO: set checked unique and repeatly-->
-				<input class="form-radio" id="bitBucketRadioButton" name="source" type="radio" value="no">
-				<label for="bitBucketRadioButton">BitBucket</label></br>
+				<input id="bitBucketRadioButton" name="source" type="radio">
+				<label for="bitBucketRadioButton">BitBucket</label>
 			</div>
-			<div class="radioGroup">
-				<input class="form-radio" id="gitHubRadioButton" name="source" type="radio" value="no" checked="checked">
-				<label for="gitHubRadioButton">GitHub</label></br>
+			<div class="radio-group">
+				<input id="gitHubRadioButton" name="source" type="radio" checked="yes">
+				<label for="gitHubRadioButton">GitHub</label>
 			</div>
-			<div class="radioGroup">
-				<input class="form-radio" id="gitLabRadioButton" name="source" type="radio" value="no">
+			<div class="radio-group">
+				<input id="gitLabRadioButton" name="source" type="radio">
 				<label for="gitLabRadioButton">GitLab</label>
 			</div>
 		</form>
