@@ -8,18 +8,18 @@ function addElementToTable(general, description, source, last_updated, owner, am
   var table = document.getElementById("resultTable").getElementsByTagName('tbody')[0];
   var newRow = table.insertRow(table.rows.length);
   newRow.setAttribute("id", "row".concat(rowCounter));
-  
+
   var idCell = newRow.insertCell(0);
   var idElement = document.createTextNode(rowCounter);
   idCell.appendChild(idElement);
-  
+
   var nameCell = newRow.insertCell(1);
   var projectName = document.createTextNode(general.name);
   var projectUrl = document.createTextNode(general.url);
   nameCell.appendChild(projectName);
   nameCell.appendChild(document.createElement("br"));
   nameCell.appendChild(projectUrl);
-  
+
   var descriptionCell = newRow.insertCell(2);
   var descriptionElement;
   if(description == null){
@@ -28,15 +28,15 @@ function addElementToTable(general, description, source, last_updated, owner, am
 	descriptionElement = document.createTextNode(description);
   }
   descriptionCell.appendChild(descriptionElement);
-  
+
   var sourceCell = newRow.insertCell(3);
   var sourceElement = document.createTextNode(source);
   sourceCell.appendChild(sourceElement);
-  
+
   var updatedCell = newRow.insertCell(4);
   var updatedElement = document.createTextNode(last_updated);
   updatedCell.appendChild(updatedElement);
-  
+
   var ownerCell = newRow.insertCell(5);
   var ownerName = document.createTextNode(owner.name);
   var ownerUrl = document.createTextNode(owner.url);
@@ -48,13 +48,18 @@ function addElementToTable(general, description, source, last_updated, owner, am
   ownerCell.appendChild(ownerName);
   ownerCell.appendChild(document.createElement("br"));
   ownerCell.appendChild(ownerUrl);
-  
+
   var contributorsCell = newRow.insertCell(6);
   var contributorsElement = document.createTextNode(amount_contributors);
   contributorsCell.appendChild(contributorsElement);
-  
+
   var homepageCell = newRow.insertCell(7);
-  var homepageElement = document.createTextNode(external_homepage);
+  var homepageElement;
+  if(external_homepage == null){
+    homepageElement = document.createTextNode("-");
+  }else{
+    homepageElement = document.createTextNode(external_homepage);
+  }
   homepageCell.appendChild(homepageElement);
 }
 
@@ -127,8 +132,8 @@ function searchButtonClicked(){
   searchString = processSearchString(searchString);
   searchForProjects(searchString, source, function(e){
     matchAndSortProjects(e);
-	showSearchingIndicator(false);
-	showResultTable(true);
+	  showSearchingIndicator(false);
+	  showResultTable(true);
   });
   showSearchingIndicator(true);
 }

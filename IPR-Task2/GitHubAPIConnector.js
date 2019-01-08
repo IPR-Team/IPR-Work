@@ -15,7 +15,7 @@ function pullGitHubRepositories(searchString, callBack){
     }
   })
   .then(function(jsonString){
-	document.getElementById("result-amount").innerHTML = jsonString.total_count;
+	  document.getElementById("result-amount").innerHTML = jsonString.total_count;
     var object = jsonString.items;
     console.log("Received " + object.length + " items");
     for(i = 0; i < object.length; i++){ //jsonObject.length || JSON.parse(jsonString).total_count
@@ -55,6 +55,6 @@ function parseObjectToProjectData(object){
   project.owner.url = object.owner.html_url;
   project.owner.image = object.owner.avatar_url;
   project.amount_contributors = 0;
-  project.external_homepage = "http://";
+  project.external_homepage = object.homepage;
   return project;
 }
