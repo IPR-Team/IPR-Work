@@ -131,11 +131,11 @@ function searchButtonClicked(){
   //document.getElementById("input").value = "";
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   searchString = processSearchString(searchString);
-  connectorAPI = getConnector(source, function(e){
+  connectorAPI = getConnector(searchString, source, function(e){
     matchAndSortProjects(e);
 	  showSearchingIndicator(false);
 	  showResultTable(true);
   });
-  connectorAPI.searchForRepositorys(searchString, 30, 4);
+  connectorAPI.searchForRepositorys(30, 4);
   showSearchingIndicator(true);
 }

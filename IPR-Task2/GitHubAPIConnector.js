@@ -1,9 +1,10 @@
 //Constructor and Class
-function GitHubAPIConnector(aCallback){
+function GitHubAPIConnector(aSearchString, aCallback){
   var callback = aCallback;
+  var searchString = aSearchString;
 
   //public function of object GitHubAPIConnector
-  this.searchForRepositorys = function(searchString, amount_of_results, page){
+  this.searchForRepositorys = function(amount_of_results, page){
     //Header: link - ...    auswerten für maximale Anzahl der Seiten
     url = "https://api.github.com/search/repositories";
     query = "?q=".concat(searchString);
