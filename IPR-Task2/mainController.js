@@ -90,7 +90,7 @@ function showResultTable(value){
   var table = document.getElementById("resultArea");
   if(value === true){
     table.style.display = "block";
-  }else{
+  }else if(value === false){
     table.style.display = "none";
   }
 }
@@ -98,16 +98,26 @@ function showResultTable(value){
 //While searching something should indicate, that app is still running and
 //is not blocked.
 function showSearchingIndicator(value){
-  var searchingIndicator = document.getElementById("resultArea");
+  var searchingIndicator = document.getElementById("searchingIndicator");
   if(value === true){
     searchingIndicator.style.display = "block";
-  }else{
+  }else if(value === false){
     searchingIndicator.style.display = "none";
+  }
+}
+
+function disableSearchButton(value){
+  var searchButton = document.getElementById("searchButton");
+  if(value === true){
+    searchButton.setAttribute("disabled", "disabled");
+  }else if(value === false){
+    searchButton.removeAttribute("disabled");
   }
 }
 
 function searchButtonClicked(){
   var source;
+  disableSearchButton(true);
   showResultTable(false);
   clearTable();
   if(document.getElementById("bitBucketRadioButton").checked == true){
@@ -125,6 +135,7 @@ function searchButtonClicked(){
     showSearchingIndicator(false);
     showResultTable(true);
     matchAndSortProjects(e);
+    disableSearchButton(false);
   });
   showSearchingIndicator(true);
 }
