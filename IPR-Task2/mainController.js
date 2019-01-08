@@ -52,9 +52,11 @@ function addElementToTable(general, description, source, last_updated, owner, am
 function addProjectToTable(project){
   addElementToTable(project.general, project.description, project.source, project.last_updated,
     project.owner, project.amount_contributors, project.external_homepage);
-    //save porjects in ram for later proposals?
+    //save projects in ram for later proposals? -> Is not needed. All data will be shown on html page
+    //and can be accessed there
 }
 
+//callback for connectors to access main thread directly. -> Modularity
 function matchAndSortProjects(projectList){
   projectList.sort(function(a, b){ return a.last_updated < b.last_updated });
   for(i = 0; i < projectList.length; i++){
@@ -63,6 +65,7 @@ function matchAndSortProjects(projectList){
   }
 }
 
+//clear table
 function deleteOldTableEntries(){
   if(rowCounter > 0){
     while(rowCounter >= 0){
@@ -73,6 +76,7 @@ function deleteOldTableEntries(){
   }
 }
 
+//simplify search string for search algorithmns of APIs
 function processSearchString(searchString){
   var newSearchString = searchString.replace(/[^\w\d]+/g," ");
   newSearchString = newSearchString.trim().toLowerCase();
@@ -80,6 +84,7 @@ function processSearchString(searchString){
   return newSearchString;
 }
 
+//Do not show table before any result is available.
 function activateResultTable(){
   var table = document.getElementById("resultArea");
   if(table.style.display === "none"){
@@ -87,6 +92,8 @@ function activateResultTable(){
   }
 }
 
+//While searching something should indicate, that app is still running and
+//is not blocked. A call toggles indicator on or off
 function toggleSearchingIndicator(){
   var searchingIndicator = document.getElementById("resultArea");
   if(searchingIndicator.style.display === "none"){
@@ -98,7 +105,6 @@ function toggleSearchingIndicator(){
 
 function searchButtonClicked(){
   var source;
-  //ein Repository gleichzeitig auch möglich -> Radiobuttons
   if(document.getElementById("bitBucketRadioButton").checked == true){
     source = "BitBucket";
   }else if(document.getElementById("gitHubRadioButton").checked == true){

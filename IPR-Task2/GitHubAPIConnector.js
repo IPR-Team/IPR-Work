@@ -1,5 +1,3 @@
-const Http = new XMLHttpRequest();
-
 function pullGitHubRepositories(searchString, callBack){
   console.log("Pulling GitHub repositorys now");
   url = "https://api.github.com/search/repositories";
@@ -7,7 +5,7 @@ function pullGitHubRepositories(searchString, callBack){
   sort = "&sort=updated"
   url = url.concat(query,sort);
   pullProjectResponse = [];
-  console.log("Created url");
+  console.log("Created url: " + url);
   fetch(url)
   .then(function(response){
     //console.log(response.readyState);
