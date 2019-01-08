@@ -3,13 +3,13 @@
 //- Zuerst solltest du checken, ob es ein Limit für API Requests gibt. Meistens
 // gibt es dann eine Ausweichadresse, wo du deinen Connector testen kannst, ohne
 // dein Limit auf zu brauchen
-//- Guck am Besten auch ob es schon von der API her einen Such-/Filteraögorithmus gibt 
+//- Guck am Besten auch ob es schon von der API her einen Such-/Filteraögorithmus gibt
 
 function pullBitBucketRepositories(searchString){
   console.log("Pulling BitBucket repositorys now");
-  url = "" //url for pulling results
-  query = "" //is there any search query addable to url?
-  sort = "" //is there any sort query addable to url?
+  url = ""; //url for pulling results
+  query = ""; //is there any search query addable to url?
+  sort = ""; //is there any sort query addable to url?
   url = url.concat(query,sort);
   pullProjectResponse = [];
   console.log("Created url: " + url);

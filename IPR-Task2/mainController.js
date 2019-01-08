@@ -3,7 +3,7 @@ var createdDataCounter = 0;
 var projects = [];
 
 function addElementToTable(general, description, source, last_updated, owner, amount_contributors, external_homepage){
-  rowCounter++;
+  rowCounter = rowCounter + 1;
   var newRow = document.createElement("tr");
   newRow.setAttribute("id", "row".concat(rowCounter));
 
@@ -59,14 +59,15 @@ function addProjectToTable(project){
 //callback for connectors to access main thread directly. -> Modularity
 function matchAndSortProjects(projectList){
   projectList.sort(function(a, b){ return a.last_updated < b.last_updated });
-  for(i = 0; i < projectList.length; i++){
-    addProjectToTable(projectList[0]);
-    projectList.shift();
+  while(projectList.length > 0){
+    var projectItem = projectList.shift();
+    addProjectToTable(projectItem);
   }
+  console.log("Added " + rowCounter + " items to main");
 }
 
 //clear table
-function deleteOldTableEntries(){
+function clearTable(){
   if(rowCounter > 0){
     while(rowCounter >= 0){
       var child = document.getElementById("row".concat(rowCounter));
@@ -85,18 +86,20 @@ function processSearchString(searchString){
 }
 
 //Do not show table before any result is available.
-function activateResultTable(){
+function showResultTable(value){
   var table = document.getElementById("resultArea");
-  if(table.style.display === "none"){
+  if(value === true){
     table.style.display = "block";
+  }else{
+    table.style.display = "none";
   }
 }
 
 //While searching something should indicate, that app is still running and
-//is not blocked. A call toggles indicator on or off
-function toggleSearchingIndicator(){
+//is not blocked.
+function showSearchingIndicator(value){
   var searchingIndicator = document.getElementById("resultArea");
-  if(searchingIndicator.style.display === "none"){
+  if(value === true){
     searchingIndicator.style.display = "block";
   }else{
     searchingIndicator.style.display = "none";
@@ -105,6 +108,8 @@ function toggleSearchingIndicator(){
 
 function searchButtonClicked(){
   var source;
+  showResultTable(false);
+  clearTable();
   if(document.getElementById("bitBucketRadioButton").checked == true){
     source = "BitBucket";
   }else if(document.getElementById("gitHubRadioButton").checked == true){
@@ -117,9 +122,9 @@ function searchButtonClicked(){
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   searchString = processSearchString(searchString);
   searchForProjects(searchString, source, function(e){
-    toggleSearchingIndicator(); //off
-    activateResultTable();
+    showSearchingIndicator(false);
+    showResultTable(true);
     matchAndSortProjects(e);
   });
-  toggleSearchingIndicator(); //on
+  showSearchingIndicator(true);
 }

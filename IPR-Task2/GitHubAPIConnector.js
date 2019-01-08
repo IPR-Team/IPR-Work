@@ -1,27 +1,23 @@
 function pullGitHubRepositories(searchString, callBack){
-  console.log("Pulling GitHub repositorys now");
   url = "https://api.github.com/search/repositories";
   query = "?q=".concat(searchString);
-  sort = "&sort=updated"
+  sort = "&sort=updated";
   url = url.concat(query,sort);
   pullProjectResponse = [];
-  console.log("Created url: " + url);
   fetch(url)
   .then(function(response){
     //console.log(response.readyState);
     if(response.ok){
-      console.log(response);
+      console.log("Requested: " + url);
       return response.json();
     }else{
       throw new Error("Search results konnte nicht geladen werden!");
     }
   })
   .then(function(jsonString){
-    console.log(jsonString);
     var object = jsonString.items;
-
+    console.log("Received " + object.length + " items");
     for(i = 0; i < object.length; i++){ //jsonObject.length || JSON.parse(jsonString).total_count
-      console.log(object[i]);
       pullProjectResponse.push(parseObjectToProjectData(object[i]));
     }
     callBack(pullProjectResponse);
@@ -29,14 +25,6 @@ function pullGitHubRepositories(searchString, callBack){
   catch(function(error){
     console.log(error);
   });
-}
-
-function parseJSONToProjects(jsonString){
-  var jsonObject = JSON.parse(jsonString).items;
-
-  for(i = 0; i < jsonObject.length; i++){ //jsonObject.length || JSON.parse(jsonString).total_count
-    addProjectToTable(parseObjectToProjectData(jsonObject[i]));
-  }
 }
 
 function processDescription(description){
