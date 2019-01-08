@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet"> 
 		<script type="text/javascript" src="mainController.js"></script>
 		<script type="text/javascript" src="SearchManager.js"></script>
 		<script type="text/javascript" src="BitBucketAPIConnector.js"></script>
@@ -17,21 +17,53 @@
 			<div class="topbar"/>
 		</header>
 		<div class="body-container">
-		<h3>Select the data source:</h3>
-		<form>
-			<div class="radio-group">
-				<!--TODO: set checked unique and repeatly-->
-				<input id="bitBucketRadioButton" name="source" type="radio">
-				<label for="bitBucketRadioButton">BitBucket</label>
+			<h3>Select the data source:</h3>
+			<form>
+				<div class="radio-group">
+					<!--TODO: set checked unique and repeatly-->
+					<input id="bitBucketRadioButton" name="source" type="radio">
+					<label for="bitBucketRadioButton">BitBucket</label>
+				</div>
+				<div class="radio-group">
+					<input id="gitHubRadioButton" name="source" type="radio" checked="yes">
+					<label for="gitHubRadioButton">GitHub</label>
+				</div>
+				<div class="radio-group">
+					<input id="gitLabRadioButton" name="source" type="radio">
+					<label for="gitLabRadioButton">GitLab</label>
+				</div>
+			</form>
+			<h3>Search for projects:</h3>
+			<div class="project-search">
+				<input id="input" type="text" name="" value="" placeholder="Project name...">
+				<button id="searchButton" onclick="searchButtonClicked()">Search</button>
 			</div>
-			<div class="radio-group">
-				<input id="gitHubRadioButton" name="source" type="radio" checked="yes">
-				<label for="gitHubRadioButton">GitHub</label>
+			<br/>
+			<div id="resultArea" style="display: none;">
+				<div style="width:100%;">
+					<p id="last-search">Results for '<label id="lastSearchedOutput">Error!</label>':</p>
+					<p id="result-amount"></p>
+					<p id="pages"> Elements per page</p>
+				</div>
+				<table style="width:100%" id="resultTable">
+					<tbody>
+						<tr>
+							<th>Number</th>
+							<th>Name</th>
+							<th>Description</th>
+							<th>Source</th>
+							<th>Last updated</th>
+							<th>Owner</th>
+							<th>Contributors</th>
+							<th>Homepage</th>
+						</tr>
+					</tbody>
+				</table>
 			</div>
-			<div class="radio-group">
-				<input id="gitLabRadioButton" name="source" type="radio">
-				<label for="gitLabRadioButton">GitLab</label>
+			<div id="searchingIndicator" style="display: none;">
+				<p>Searching...</p>
 			</div>
+<<<<<<< HEAD
 		</form>
 		<h3>Search for projects:</h3>
 		<div class="project-search">
@@ -59,6 +91,8 @@
 		<div id="searchingIndicator" style="display: none;">
 			<p>Searching...</p>
 		</div>
+=======
+>>>>>>> 596f6d0865b42614af2778b773e0ce5aa264f1d6
 		</div>
 	</body>
 </html>

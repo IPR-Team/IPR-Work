@@ -1,62 +1,75 @@
-var rowCounter = -1;
+var rowCounter = 0;
+var currentPage = 1;
 var createdDataCounter = 0;
 var projects = [];
 
 function addElementToTable(general, description, source, last_updated, owner, amount_contributors, external_homepage){
   rowCounter = rowCounter + 1;
-  var newRow = document.createElement("tr");
+  var table = document.getElementById("resultTable").getElementsByTagName('tbody')[0];
+  var newRow = table.insertRow(table.rows.length);
   newRow.setAttribute("id", "row".concat(rowCounter));
 
-  var numberElement = document.createElement("td");
-  numberElement.innerHTML = rowCounter;
+  var idCell = newRow.insertCell(0);
+  var idElement = document.createTextNode(rowCounter);
+  idCell.appendChild(idElement);
 
-  var nameElement = document.createElement("td");
-  nameElement.innerHTML = general.name.concat("<br/>", general.url);
+  var nameCell = newRow.insertCell(1);
+  var projectName = document.createTextNode(general.name);
+  var projectUrl = document.createTextNode(general.url);
+  nameCell.appendChild(projectName);
+  nameCell.appendChild(document.createElement("br"));
+  nameCell.appendChild(projectUrl);
 
-  var descriptionElement = document.createElement("td");
-  descriptionElement.innerHTML = description;
+  var descriptionCell = newRow.insertCell(2);
+  var descriptionElement;
+  if(description == null){
+    descriptionElement = document.createTextNode("-");
+  }else{
+	descriptionElement = document.createTextNode(description);
+  }
+  descriptionCell.appendChild(descriptionElement);
 
-  var sourceElement = document.createElement("td");
-  sourceElement.innerHTML = source;
+  var sourceCell = newRow.insertCell(3);
+  var sourceElement = document.createTextNode(source);
+  sourceCell.appendChild(sourceElement);
 
-  var lastUpdatedElement = document.createElement("td");
-  lastUpdatedElement.innerHTML = last_updated;
+  var updatedCell = newRow.insertCell(4);
+  var updatedElement = document.createTextNode(last_updated);
+  updatedCell.appendChild(updatedElement);
 
-  var ownerElement = document.createElement("td");
-  var userDescription = document.createElement("p");
-  var image = document.createElement("img");
-  image.setAttribute("src", owner.image);
-  image.setAttribute("id", "picture");
-  userDescription.innerHTML = owner.name.concat("<br/>", owner.url);
-  ownerElement.appendChild(image);
-  ownerElement.appendChild(userDescription);
+  var ownerCell = newRow.insertCell(5);
+  var ownerName = document.createTextNode(owner.name);
+  var ownerUrl = document.createTextNode(owner.url);
+  var ownerImage = document.createElement("img");
+  ownerImage.setAttribute("src", owner.image);
+  ownerImage.setAttribute("id", "picture");
+  ownerCell.appendChild(ownerImage);
+  ownerCell.appendChild(document.createElement("br"));
+  ownerCell.appendChild(ownerName);
+  ownerCell.appendChild(document.createElement("br"));
+  ownerCell.appendChild(ownerUrl);
 
-  var amountContributorsElement = document.createElement("td");
-  amountContributorsElement.innerHTML = amount_contributors;
+  var contributorsCell = newRow.insertCell(6);
+  var contributorsElement = document.createTextNode(amount_contributors);
+  contributorsCell.appendChild(contributorsElement);
 
-  var externalHomepageElement = document.createElement("td");
-  externalHomepageElement.innerHTML = external_homepage;
-
-  newRow.appendChild(numberElement);
-  newRow.appendChild(nameElement);
-  newRow.appendChild(descriptionElement);
-  newRow.appendChild(sourceElement);
-  newRow.appendChild(lastUpdatedElement);
-  newRow.appendChild(ownerElement);
-  newRow.appendChild(amountContributorsElement);
-  newRow.appendChild(externalHomepageElement);
-  document.getElementById("resultTable").appendChild(newRow);
+  var homepageCell = newRow.insertCell(7);
+  var homepageElement;
+  if(external_homepage == null){
+    homepageElement = document.createTextNode("-");
+  }else{
+    homepageElement = document.createTextNode(external_homepage);
+  }
+  homepageCell.appendChild(homepageElement);
 }
 
 //Will be accessed by connectors!
 function addProjectToTable(project){
   addElementToTable(project.general, project.description, project.source, project.last_updated,
     project.owner, project.amount_contributors, project.external_homepage);
-    //save projects in ram for later proposals? -> Is not needed. All data will be shown on html page
-    //and can be accessed there
+    //save porjects in ram for later proposals?
 }
 
-//callback for connectors to access main thread directly. -> Modularity
 function matchAndSortProjects(projectList){
   projectList.sort(function(a, b){ return a.last_updated < b.last_updated });
   while(projectList.length > 0){
@@ -66,10 +79,9 @@ function matchAndSortProjects(projectList){
   console.log("Added " + rowCounter + " items to main");
 }
 
-//clear table
 function clearTable(){
-  if(rowCounter > 0){
-    while(rowCounter >= 0){
+  if(rowCounter > 1){
+    while(rowCounter >= 1){
       var child = document.getElementById("row".concat(rowCounter));
       child.remove();
       rowCounter--;
@@ -77,7 +89,6 @@ function clearTable(){
   }
 }
 
-//simplify search string for search algorithmns of APIs
 function processSearchString(searchString){
   var newSearchString = searchString.replace(/[^\w\d]+/g," ");
   newSearchString = newSearchString.trim().toLowerCase();
@@ -85,41 +96,29 @@ function processSearchString(searchString){
   return newSearchString;
 }
 
-//Do not show table before any result is available.
 function showResultTable(value){
   var table = document.getElementById("resultArea");
   if(value === true){
-    table.style.display = "block";
-  }else if(value === false){
-    table.style.display = "none";
+	  table.style.display = "block";
+  }else{
+	  table.style.display = "none";
   }
 }
 
-//While searching something should indicate, that app is still running and
-//is not blocked.
 function showSearchingIndicator(value){
   var searchingIndicator = document.getElementById("searchingIndicator");
   if(value === true){
     searchingIndicator.style.display = "block";
-  }else if(value === false){
+  }else{
     searchingIndicator.style.display = "none";
-  }
-}
-
-function disableSearchButton(value){
-  var searchButton = document.getElementById("searchButton");
-  if(value === true){
-    searchButton.setAttribute("disabled", "disabled");
-  }else if(value === false){
-    searchButton.removeAttribute("disabled");
   }
 }
 
 function searchButtonClicked(){
   var source;
-  disableSearchButton(true);
   showResultTable(false);
   clearTable();
+  //ein Repository gleichzeitig auch möglich -> Radiobuttons
   if(document.getElementById("bitBucketRadioButton").checked == true){
     source = "BitBucket";
   }else if(document.getElementById("gitHubRadioButton").checked == true){
@@ -128,14 +127,13 @@ function searchButtonClicked(){
     source = "GitLab";
   }
   var searchString = document.getElementById("input").value;
-  document.getElementById("input").value = "";
+  //document.getElementById("input").value = "";
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   searchString = processSearchString(searchString);
   searchForProjects(searchString, source, amount_of_results, function(e){
-    showSearchingIndicator(false);
-    showResultTable(true);
     matchAndSortProjects(e);
-    disableSearchButton(false);
+	  showSearchingIndicator(false);
+	  showResultTable(true);
   });
   showSearchingIndicator(true);
 }
