@@ -2,6 +2,7 @@ var rowCounter = 0;
 var currentPage = 1;
 var createdDataCounter = 0;
 var projects = [];
+var connectorAPI;
 
 function addElementToTable(general, description, source, last_updated, owner, amount_contributors, external_homepage){
   rowCounter = rowCounter + 1;
@@ -118,7 +119,7 @@ function searchButtonClicked(){
   var source;
   showResultTable(false);
   clearTable();
-  //ein Repository gleichzeitig auch möglich -> Radiobuttons
+
   if(document.getElementById("bitBucketRadioButton").checked == true){
     source = "BitBucket";
   }else if(document.getElementById("gitHubRadioButton").checked == true){
@@ -130,10 +131,11 @@ function searchButtonClicked(){
   //document.getElementById("input").value = "";
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   searchString = processSearchString(searchString);
-  searchForProjects(searchString, source, amount_of_results, function(e){
+  connectorAPI = getConnector(source, function(e){
     matchAndSortProjects(e);
 	  showSearchingIndicator(false);
 	  showResultTable(true);
   });
+  connectorAPI.searchForRepositorys(searchString, 30, 4);
   showSearchingIndicator(true);
 }
