@@ -15,6 +15,7 @@ function pullGitHubRepositories(searchString, callBack){
     }
   })
   .then(function(jsonString){
+	document.getElementById("result-amount").innerHTML = jsonString.total_count;
     var object = jsonString.items;
     console.log("Received " + object.length + " items");
     for(i = 0; i < object.length; i++){ //jsonObject.length || JSON.parse(jsonString).total_count

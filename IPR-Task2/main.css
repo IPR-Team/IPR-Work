@@ -22,7 +22,7 @@ body {
 	display: flex;
 }
 
-h1, h3, h4, th, td, body, label{
+h1, h3, p, th, td, body, label{
 	font-family: 'Nunito', sans-serif;
 	color: white;
 }
@@ -56,9 +56,20 @@ header > h1 {
 	text-shadow: 2px 2px 0px #131418;
 }
 
-h4 {
+#result-amount{
+	display: inline-block;
 	font-weight: normal; 
-	text-align: left;
+	float: left;
+}
+#last-search{
+	display: inline-block;
+	font-weight: normal; 
+	float: left;
+}
+#pages{
+	display: inline-block;
+	font-weight: normal; 
+	float: right;
 }
 
 table {
