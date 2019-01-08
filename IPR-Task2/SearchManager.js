@@ -1,12 +1,12 @@
-function searchForProjects(searchString, source, callback){
+function searchForProjects(searchString, source, amount_of_results, callback){
   if(source != null){
       console.log("Target: " + source);
       if(source === "BitBucket"){
-        pullBitBucketRepositories(searchString, callback);
+        pullBitBucketRepositorys(searchString, amount_of_results, callback);
       }else if(source === "GitHub"){
-        pullGitHubRepositories(searchString, callback);
+        pullGitHubRepositorys(searchString, amount_of_results, callback);
       }else if(source === "GitLab"){
-        pullGitLabRepositories(searchString, callback);
+        pullGitLabRepositorys(searchString, amount_of_results, callback);
       }
   }
   return 0;

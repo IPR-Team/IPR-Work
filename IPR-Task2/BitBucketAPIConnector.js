@@ -5,7 +5,7 @@
 // dein Limit auf zu brauchen
 //- Guck am Besten auch ob es schon von der API her einen Such-/Filteraögorithmus gibt
 
-function pullBitBucketRepositories(searchString){
+function pullFirstBitBucketRepositorys(searchString, amount_of_results, callback){
   console.log("Pulling BitBucket repositorys now");
   url = ""; //url for pulling results
   query = ""; //is there any search query addable to url?

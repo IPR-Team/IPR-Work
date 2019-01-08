@@ -1,4 +1,4 @@
-function pullGitLabRepositories(searchString){
+function pullGitLabRepositorys(searchString, amount_of_results, callback){
   const Http = new XMLHttpRequest();
   const url = "";
   Http.open("GET", url);

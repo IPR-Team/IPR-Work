@@ -1,4 +1,4 @@
-function pullGitHubRepositories(searchString, callBack){
+function pullFirstGitHubRepositorys(searchString, amount_of_results, callBack){
   url = "https://api.github.com/search/repositories";
   query = "?q=".concat(searchString);
   sort = "&sort=updated";

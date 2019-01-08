@@ -131,7 +131,7 @@ function searchButtonClicked(){
   document.getElementById("input").value = "";
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   searchString = processSearchString(searchString);
-  searchForProjects(searchString, source, function(e){
+  searchForProjects(searchString, source, amount_of_results, function(e){
     showSearchingIndicator(false);
     showResultTable(true);
     matchAndSortProjects(e);
