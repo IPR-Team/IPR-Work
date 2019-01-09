@@ -70,9 +70,29 @@ label:not(#lastSearchedOutput) {
 	float: left;
 }
 
-#pages{
+.page-button{
 	display: inline-block;
+	background: rgba(255,255,255, 0.1);
+	border: 1px solid;
+	border-color: #111922;
+	color: white;
+	text-align: center;
+	cursor: pointer;
+	height: 40px;
+	width: 120px;
 	float: right;
+
+	-webkit-transition-duration: 0.2s; /* Safari */
+  transition-duration: 0.2s;
+}
+
+.page-button:hover{
+	background: rgba(255,255,255, 0.8);
+	color:black;
+}
+
+.page-button:disabled{
+	display: none;
 }
 
 #resultTable {
@@ -108,7 +128,6 @@ tr:not(:first-child):hover {
 .project-search {
 	width: 500px;
 	height: 40px;
-	background: #444;	/* fallback */
 	background: rgba(255,255,255, 0.1);
 	border: 1px solid;
 	border-color: #111922;
@@ -134,6 +153,9 @@ tr:not(:first-child):hover {
 	background: transparent;
 	border-left: 1px solid;
 	border-color: #111922;
+
+	-webkit-transition-duration: 0.2s; /* Safari */
+	transition-duration: 0.2s;
 }
 .project-search button:hover {
 	background: rgba(255,255,255, 0.8);

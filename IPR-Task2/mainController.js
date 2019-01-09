@@ -101,6 +101,7 @@ function showResultTable(value){
   var table = document.getElementById("resultArea");
   if(value === true){
 	  table.style.display = "block";
+    checkPages();
   }else{
 	  table.style.display = "none";
   }
@@ -132,10 +133,27 @@ function searchButtonClicked(){
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   searchString = processSearchString(searchString);
   connectorAPI = getConnector(source);
-  connectorAPI.searchForProjects(searchString, 50, 1, function(e){
+  connectorAPI.searchForProjects(searchString, 50, currentPage, function(e){
     matchAndSortProjects(e);
 	  showSearchingIndicator(false);
 	  showResultTable(true);
   });
   showSearchingIndicator(true);
+}
+
+function checkPages(){
+  if(currentPage == 1){
+    document.getElementById("previous-page").disabled = true;
+  }else{
+    document.getElementById("previous-page").disabled = false;
+  }
+}
+
+function getNextPage(){
+  currentPage++;
+  searchButtonClicked();
+}
+function getPreviousPage(){
+  currentPage--;
+  searchButtonClicked();
 }

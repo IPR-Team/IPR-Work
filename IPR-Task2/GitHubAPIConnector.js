@@ -16,7 +16,7 @@ function GitHubAPIConnector(){
         console.log("Requested: " + url);
         return response.json();
       }else{
-        throw new Error("Search results konnte nicht geladen werden!");
+        throw new Error("Search query could not be executed! The request limit may have been reached.");
       }
     })
     .then(function(jsonString){
