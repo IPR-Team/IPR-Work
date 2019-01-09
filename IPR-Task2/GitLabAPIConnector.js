@@ -7,7 +7,7 @@ function GitLabAPIConnector(aSearchString, aCallback){
   var searchString = aSearchString;
 
   //public function of object GitHubAPIConnector / each kind of connector do need this function!!!
-  this.searchForRepositorys = function(amount_of_results, page){
+  this.searchForProjects = function(amount_of_results, page){
     //Header: link - ...    auswerten für maximale Anzahl der Seiten
     var url = "https://gitlab.com/api/v4/search";
     var query = "&search=".concat(searchString);

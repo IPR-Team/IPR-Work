@@ -3,16 +3,16 @@ function GitHubAPIConnector(aSearchString, aCallback){
   var callback = aCallback;
   var searchString = aSearchString;
 
-  //public function of object GitHubAPIConnector
-  this.searchForRepositorys = function(amount_of_results, page){
+  //public function of object GitHubAPIConnector / each kind of connector do need this function!!!
+  this.searchForProjects = function(amount_of_results, page){
     //Header: link - ...    auswerten für maximale Anzahl der Seiten
-    url = "https://api.github.com/search/repositories";
-    query = "?q=".concat(searchString);
-    maxResults = "&per_page=" + amount_of_results;
-    page = "&page=" + page;
-    sort = "&sort=updated";
-    url = url.concat(query, maxResults, page,sort);
-    pullProjectResponse = [];
+    var url = "https://api.github.com/search/repositories";
+    var query = "?q=".concat(searchString);
+    var maxResults = "&per_page=" + amount_of_results;
+    var page = "&page=" + page;
+    var sort = "&sort=updated";
+    var url = url.concat(query, maxResults, page,sort);
+    var pullProjectResponse = [];
     fetch(url)
     .then(function(response){
       if(response.ok){

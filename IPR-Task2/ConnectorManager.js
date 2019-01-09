@@ -3,7 +3,7 @@ function getConnector(searchString, source, callback){
       var connector;
       console.log("Target: " + source);
       if(source === "BitBucket"){
-        //pullFirstBitBucketRepositorys(searchString, amount_of_results, callback);
+        connector = new BitBucketAPIConnector(searchString, callback);
       }else if(source === "GitHub"){
         connector = new GitHubAPIConnector(searchString, callback);
       }else if(source === "GitLab"){

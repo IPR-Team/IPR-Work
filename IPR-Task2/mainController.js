@@ -136,6 +136,6 @@ function searchButtonClicked(){
 	  showSearchingIndicator(false);
 	  showResultTable(true);
   });
-  connectorAPI.searchForRepositorys(30, 4);
+  connectorAPI.searchForProjects(50, 1);
   showSearchingIndicator(true);
 }
