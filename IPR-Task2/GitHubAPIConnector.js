@@ -1,13 +1,10 @@
 //Constructor and Class
-function GitHubAPIConnector(aSearchString, aCallback){
-  var callback = aCallback;
-  var searchString = aSearchString;
-
+function GitHubAPIConnector(){
   //public function of object GitHubAPIConnector / each kind of connector do need this function!!!
-  this.searchForProjects = function(amount_of_results, page){
+  this.searchForProjects = function(search_string, amount_of_results, page, callback){
     //Header: link - ...    auswerten für maximale Anzahl der Seiten
     var url = "https://api.github.com/search/repositories";
-    var query = "?q=".concat(searchString);
+    var query = "?q=".concat(search_string);
     var maxResults = "&per_page=" + amount_of_results;
     var page = "&page=" + page;
     var sort = "&sort=updated";
@@ -35,6 +32,7 @@ function GitHubAPIConnector(aSearchString, aCallback){
     });
   }
 
+  this.
   //private function: Shortened description by triming full string
   var processDescription = function(description){
     if(description != null){

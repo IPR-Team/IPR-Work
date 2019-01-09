@@ -2,15 +2,11 @@
 //Contributors: https://docs.gitlab.com/ce/api/repositories.html / /projects/:id/members
 //Projects: https://docs.gitlab.com/ce/api/search.html
 
-function GitLabAPIConnector(aSearchString, aCallback){
-  var callback = aCallback;
-  var searchString = aSearchString;
-
+function GitLabAPIConnector(){
   //public function of object GitHubAPIConnector / each kind of connector do need this function!!!
-  this.searchForProjects = function(amount_of_results, page){
-    //Header: link - ...    auswerten für maximale Anzahl der Seiten
+  this.searchForProjects = function(search_string, amount_of_results, page, callback){
     var url = "https://gitlab.com/api/v4/search";
-    var query = "&search=".concat(searchString);
+    var query = "&search=".concat(search_string);
     var scope = "?scope=projects"
     var accessToken = "&private_token=zsPXGhyv5Rn4ss9W7f2u"; //-> CONFIG!
     var maxResults = "&per_page=" + amount_of_results;

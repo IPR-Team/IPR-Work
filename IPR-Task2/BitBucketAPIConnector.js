@@ -6,11 +6,9 @@
 //- Guck am Besten auch ob es schon von der API her einen Such-/Filteraögorithmus gibt
 //- Pagination: Link Header!
 
-function BitBucketAPIConnector(aSearchString, aCallback){
-  var callback = aCallback; // ganz wichtig! callback(listOfProjects), damit auf mainHtml dargestellt wird
-  var searchString = aSearchString;
-
-  this.searchForProjects = function(amount_of_results, page){
+function BitBucketAPIConnector(){
+  //callback ganz wichtig! callback(listOfProjects), damit projekte auf mainHtml dargestellt werden
+  this.searchForProjects = function(search_string, amount_of_results, page, callback){
 
   }
 }

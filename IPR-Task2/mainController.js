@@ -131,11 +131,11 @@ function searchButtonClicked(){
   //document.getElementById("input").value = "";
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   searchString = processSearchString(searchString);
-  connectorAPI = getConnector(searchString, source, function(e){
+  connectorAPI = getConnector(source);
+  connectorAPI.searchForProjects(searchString, 50, 1, function(e){
     matchAndSortProjects(e);
 	  showSearchingIndicator(false);
 	  showResultTable(true);
   });
-  connectorAPI.searchForProjects(50, 1);
   showSearchingIndicator(true);
 }

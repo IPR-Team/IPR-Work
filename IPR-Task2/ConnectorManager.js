@@ -1,13 +1,13 @@
-function getConnector(searchString, source, callback){
+function getConnector(source){
   if(source != null){
       var connector;
       console.log("Target: " + source);
       if(source === "BitBucket"){
-        connector = new BitBucketAPIConnector(searchString, callback);
+        connector = new BitBucketAPIConnector();
       }else if(source === "GitHub"){
-        connector = new GitHubAPIConnector(searchString, callback);
+        connector = new GitHubAPIConnector();
       }else if(source === "GitLab"){
-        connector = new GitLabAPIConnector(searchString, callback);
+        connector = new GitLabAPIConnector();
       }
   }
   return connector;
