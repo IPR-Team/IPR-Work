@@ -1,30 +1,53 @@
+/*
+ * Primary color: #192534
+ * Darker primary color: #111922
+ * Lighter primary color: #2b3f57
+*/
+
+
 body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
-	background: #4f2b6f;  /* standard for old browser */
-	background: -webkit-linear-gradient(to bottom, #4f2b6f, #82344d);  /* used by old versions of Chrome and Safari */
-	background: linear-gradient(to bottom, #4f2b6f, #82344d); /* used by up to date versions of browsers */
+	background: #2b3f57;
+	background: -webkit-linear-gradient(to bottom right, #2b3f57, #405267);  /* used by old versions of Chrome and Safari */
+	background: linear-gradient(to bottom right, #2b3f57, #405267); /* used by up to date versions of browsers */
 	background-repeat: no-repeat;
-    background-attachment: fixed;
+  background-attachment: fixed;
+}
+div, h3, p, th, td, body, label{
+	font-family: 'Nunito', sans-serif;
+	color: white;
 }
 
-.topbar {
-	background-color: #06090f;
-	height: 5px;
+.header{
+	margin: 0;
+	background: #192534;
 }
+
+.header-text{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 20px;
+	font-size: 24px;
+	text-transform: uppercase;
+	letter-spacing: 4px;
+	text-shadow: 3px 2px 0px #131418;
+}
+
+.header-seperation-bar {
+	background-color: #111922;
+	height: 4px;
+}
+
 .body-container {
 	margin: 15px;
 }
+
 .radio-group {
 	width: 200px;
 	margin: 10px;
 	display: flex;
-}
-
-h1, h3, p, th, td, body, label{
-	font-family: 'Nunito', sans-serif;
-	color: white;
 }
 
 label:not(#lastSearchedOutput) {
@@ -32,7 +55,7 @@ label:not(#lastSearchedOutput) {
 	width: 100%;
 	height: 100%;
 	margin: auto;
-    padding: 0px 15px;
+  padding: 0px 15px;
 	cursor: pointer;
 }
 
@@ -42,66 +65,53 @@ label:not(#lastSearchedOutput) {
   box-shadow: 0 0 5px rgba(0,0,0,0.8);
 }
 
-header > h1 {
-	background: #1e2d4b;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	padding-left: 20px;
-	margin-top: 0;
-	margin-bottom: 0;
-	text-transform: uppercase;
-	font-weight: 100;
-	letter-spacing: 2px;
-	
-	text-shadow: 2px 2px 0px #131418;
-}
-
-#result-amount{
-	display: inline-block;
-	font-weight: normal; 
-	float: left;
-}
 #last-search{
 	display: inline-block;
-	font-weight: normal; 
 	float: left;
 }
+
 #pages{
 	display: inline-block;
-	font-weight: normal; 
 	float: right;
 }
 
-table {
-	box-shadow: 0 0 20px rgba(0,0,0,0.4);
+#resultTable {
 	border-collapse: collapse;
+	width: 100%;
+	box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+#resultArea {
+	display: none;
 }
 
 th, td {
 	padding: 10px;
 	text-align: left;
-	font-size: 14px; 
+	font-size: 14px;
 }
 
 th {
-	background-color: #344d82;
+	background-color: #192534;
 }
 
 td {
-	background-color: rgba(255,255,255,0.15);
-	border-bottom: 1px solid white;
+	background-color: rgba(17,25,34,0.5);
+	border-bottom: 2px solid;
+	border-color: #192534;
 }
 
 tr:not(:first-child):hover {
-	background-color: rgba(255,255,255,0.1);
+	background-color: rgba(17,25,34,0.8);
 }
 
 .project-search {
 	width: 500px;
 	height: 40px;
 	background: #444;	/* fallback */
-	background: rgba(0,0,0,.2);
-	border: 1px solid white;
+	background: rgba(255,255,255, 0.1);
+	border: 1px solid;
+	border-color: #111922;
 }
 .project-search input {
 	width: 370px;
@@ -122,10 +132,11 @@ tr:not(:first-child):hover {
 	width: 120px;
 	color: white;
 	background: transparent;
-	border-left: 1px solid white;
-}   
+	border-left: 1px solid;
+	border-color: #111922;
+}
 .project-search button:hover {
-	background: white;
+	background: rgba(255,255,255, 0.8);
 	color:black;
 }
 .project-search button:focus {

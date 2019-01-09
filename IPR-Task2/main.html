@@ -12,9 +12,9 @@
 		<title>Project Search</title>
 	</head>
 	<body>
-		<header>
-			<h1>Project Search</h1>
-			<div class="topbar"/>
+		<header class="header">
+			<div class="header-text">Project Search</div>
+			<div class="header-seperation-bar"/>
 		</header>
 		<div class="body-container">
 			<h3>Select the data source:</h3>
@@ -35,17 +35,16 @@
 			</form>
 			<h3>Search for projects:</h3>
 			<div class="project-search">
-				<input id="input" type="text" name="" value="" placeholder="Project name...">
+				<input id="input" type="text" placeholder="Project name...">
 				<button id="searchButton" onclick="searchButtonClicked()">Search</button>
 			</div>
 			<br/>
-			<div id="resultArea" style="display: none;">
-				<div style="width:100%;">
+			<div id="resultArea">
+				<div>
 					<p id="last-search">Results for '<label id="lastSearchedOutput">Error!</label>':</p>
-					<p id="result-amount"></p>
-					<p id="pages"> Elements per page</p>
+					<p id="pages"> Page placeholder...</p>
 				</div>
-				<table style="width:100%" id="resultTable">
+				<table id="resultTable">
 					<tbody>
 						<tr>
 							<th>Number</th>
