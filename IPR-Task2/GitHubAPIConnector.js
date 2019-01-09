@@ -31,8 +31,6 @@ function GitHubAPIConnector(){
       console.log(error);
     });
   }
-
-  this.
   //private function: Shortened description by triming full string
   var processDescription = function(description){
     if(description != null){
