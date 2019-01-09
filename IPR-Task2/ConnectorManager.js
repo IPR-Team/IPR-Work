@@ -7,7 +7,7 @@ function getConnector(searchString, source, callback){
       }else if(source === "GitHub"){
         connector = new GitHubAPIConnector(searchString, callback);
       }else if(source === "GitLab"){
-        //pullFirstGitLabRepositorys(searchString, amount_of_results, callback);
+        connector = new GitLabAPIConnector(searchString, callback);
       }
   }
   return connector;
