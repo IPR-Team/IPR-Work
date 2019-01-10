@@ -124,38 +124,35 @@ function showSearchingIndicator(value){
 }
 
 function searchButtonClicked(){
-  var source;
   showResultTable(false);
   clearTable();
-
-  if(document.getElementById("bitBucketRadioButton").checked == true){
-    source = "BitBucket";
-  }else if(document.getElementById("gitHubRadioButton").checked == true){
-    source = "GitHub";
-  }else if(document.getElementById("gitLabRadioButton").checked == true){
-    source = "GitLab";
-  }
+  var source = getSource();
   var searchString = document.getElementById("input").value;
-
+  // resetting the page, if the user changes the source or the searched keyword while he already skipped through some pages
   if(lastSource != source || lastInput != searchString){
-    // resetting the page, if the user changes the source or the searched keyword while he already skipped through some pages
     lastSource = source;
     lastInput = searchString;
     currentPage = 1;
   }
-
-  //document.getElementById("input").value = "";
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   searchString = processSearchString(searchString);
   connectorAPI = getConnector(source);
-  connectorAPI.searchForProjects(searchString, elementsPerPage, currentPage, function(e){
-    matchAndSortProjects(e);
-	  showSearchingIndicator(false);
-	  showResultTable(true);
-  });
+  connectorAPI.searchForProjects(searchString, elementsPerPage, currentPage, prepareTable);
   showSearchingIndicator(true);
 }
-
+function prepareTable(projects){
+  matchAndSortProjects(projects);
+  showSearchingIndicator(false);
+  showResultTable(true);
+}
+function getSource(){
+  var sources = document.getElementsByName('source');
+  for (var i = 0; i < sources.length; i++){
+    if (sources[i].checked){
+      return sources[i].id;
+    }
+  }
+}
 function checkPages(){
   if(currentPage == 1){
     document.getElementById("previous-page").className = "page-button-disabled";
@@ -171,7 +168,6 @@ function checkPages(){
     document.getElementById("next-page").className = "page-button";
   }
 }
-
 function getNextPage(){
   currentPage++;
   searchButtonClicked();
@@ -180,7 +176,6 @@ function getPreviousPage(){
   currentPage--;
   searchButtonClicked();
 }
-
 function updateDisplayedPage(){
   document.getElementById("displayed-page").innerHTML = currentPage;
 }
