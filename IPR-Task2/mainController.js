@@ -1,8 +1,12 @@
 var rowCounter = 0;
 var currentPage = 1;
-var createdDataCounter = 0;
-var projects = [];
+var elementsPerPage = 50;
+var receivedProjects = 0;
+var lastSource = "";
 var connectorAPI;
+
+var projects = []; // is this used?
+var createdDataCounter = 0; // is this used?
 
 function addElementToTable(general, description, source, last_updated, owner, amount_contributors, external_homepage){
   rowCounter = rowCounter + 1;
@@ -73,6 +77,7 @@ function addProjectToTable(project){
 
 function matchAndSortProjects(projectList){
   projectList.sort(function(a, b){ return a.last_updated < b.last_updated });
+  receivedProjects = projectList.length;
   while(projectList.length > 0){
     var projectItem = projectList.shift();
     addProjectToTable(projectItem);
@@ -129,12 +134,17 @@ function searchButtonClicked(){
   }else if(document.getElementById("gitLabRadioButton").checked == true){
     source = "GitLab";
   }
+  if(lastSource != source){
+    // resetting the page, if the user changes the source while he already skipped through some pages
+    lastSource = source;
+    currentPage = 1;
+  }
   var searchString = document.getElementById("input").value;
   //document.getElementById("input").value = "";
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   searchString = processSearchString(searchString);
   connectorAPI = getConnector(source);
-  connectorAPI.searchForProjects(searchString, 50, currentPage, function(e){
+  connectorAPI.searchForProjects(searchString, elementsPerPage, currentPage, function(e){
     matchAndSortProjects(e);
 	  showSearchingIndicator(false);
 	  showResultTable(true);
@@ -147,6 +157,14 @@ function checkPages(){
     document.getElementById("previous-page").style.display = "none";
   }else{
     document.getElementById("previous-page").style.display = "flex";
+  }
+  // THIS DOES NOT COVER ALL POSSIBILITES! EXAMPLE: elementsPerPage = 50 and the last page returns 50 elements
+  // -> the website would still show the next page button
+  // GitHub shows a totalcount of results, but I did not find something similar for GitLab
+  if(receivedProjects < elementsPerPage){
+    document.getElementById("next-page").style.display = "none";
+  }else{
+    document.getElementById("next-page").style.display = "flex";
   }
 }
 
