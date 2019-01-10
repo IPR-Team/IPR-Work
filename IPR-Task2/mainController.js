@@ -120,6 +120,7 @@ function searchButtonClicked(){
   var source;
   showResultTable(false);
   clearTable();
+  updateDisplayedPage()
 
   if(document.getElementById("bitBucketRadioButton").checked == true){
     source = "BitBucket";
@@ -143,9 +144,9 @@ function searchButtonClicked(){
 
 function checkPages(){
   if(currentPage == 1){
-    document.getElementById("previous-page").disabled = true;
+    document.getElementById("previous-page").style.display = "none";
   }else{
-    document.getElementById("previous-page").disabled = false;
+    document.getElementById("previous-page").style.display = "flex";
   }
 }
 
@@ -156,4 +157,8 @@ function getNextPage(){
 function getPreviousPage(){
   currentPage--;
   searchButtonClicked();
+}
+
+function updateDisplayedPage(){
+  document.getElementById("displayed-page").innerHTML = currentPage;
 }

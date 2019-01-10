@@ -71,12 +71,13 @@ label:not(#lastSearchedOutput) {
 }
 
 .page-button{
-	display: inline-block;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	background: rgba(255,255,255, 0.1);
 	border: 1px solid;
 	border-color: #111922;
 	color: white;
-	text-align: center;
 	cursor: pointer;
 	height: 40px;
 	width: 120px;
@@ -86,13 +87,30 @@ label:not(#lastSearchedOutput) {
   transition-duration: 0.2s;
 }
 
+#next-page{
+	border-left: 0px;
+}
+
+#previous-page{
+	border-right: 0px;
+}
+
 .page-button:hover{
 	background: rgba(255,255,255, 0.8);
 	color:black;
 }
 
-.page-button:disabled{
-	display: none;
+.page-label{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: rgba(255,255,255, 0.1);
+	border: 1px solid;
+	border-color: #111922;
+	color: white;
+	height: 40px;
+	width: 120px;
+	float: right;
 }
 
 #resultTable {
