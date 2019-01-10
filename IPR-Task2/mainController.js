@@ -3,6 +3,7 @@ var currentPage = 1;
 var elementsPerPage = 50;
 var receivedProjects = 0;
 var lastSource = "";
+var lastInput = "";
 var connectorAPI;
 
 var projects = []; // is this used?
@@ -107,6 +108,7 @@ function showResultTable(value){
   if(value === true){
 	  table.style.display = "block";
     checkPages();
+    updateDisplayedPage()
   }else{
 	  table.style.display = "none";
   }
@@ -125,7 +127,6 @@ function searchButtonClicked(){
   var source;
   showResultTable(false);
   clearTable();
-  updateDisplayedPage()
 
   if(document.getElementById("bitBucketRadioButton").checked == true){
     source = "BitBucket";
@@ -134,12 +135,15 @@ function searchButtonClicked(){
   }else if(document.getElementById("gitLabRadioButton").checked == true){
     source = "GitLab";
   }
-  if(lastSource != source){
-    // resetting the page, if the user changes the source while he already skipped through some pages
+  var searchString = document.getElementById("input").value;
+
+  if(lastSource != source || lastInput != searchString){
+    // resetting the page, if the user changes the source or the searched keyword while he already skipped through some pages
     lastSource = source;
+    lastInput = searchString;
     currentPage = 1;
   }
-  var searchString = document.getElementById("input").value;
+
   //document.getElementById("input").value = "";
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   searchString = processSearchString(searchString);
@@ -154,17 +158,17 @@ function searchButtonClicked(){
 
 function checkPages(){
   if(currentPage == 1){
-    document.getElementById("previous-page").style.display = "none";
+    document.getElementById("previous-page").className = "page-button-disabled";
   }else{
-    document.getElementById("previous-page").style.display = "flex";
+    document.getElementById("previous-page").className = "page-button";
   }
   // THIS DOES NOT COVER ALL POSSIBILITES! EXAMPLE: elementsPerPage = 50 and the last page returns 50 elements
   // -> the website would still show the next page button
   // GitHub shows a totalcount of results, but I did not find something similar for GitLab
   if(receivedProjects < elementsPerPage){
-    document.getElementById("next-page").style.display = "none";
+    document.getElementById("next-page").className = "page-button-disabled";
   }else{
-    document.getElementById("next-page").style.display = "flex";
+    document.getElementById("next-page").className = "page-button";
   }
 }
 

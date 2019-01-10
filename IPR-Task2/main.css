@@ -14,8 +14,7 @@ body {
 	background: linear-gradient(to bottom right, #2b3f57, #405267); /* used by up to date versions of browsers */
 	background-repeat: no-repeat;
   background-attachment: fixed;
-}
-div, h3, p, th, td, body, label{
+
 	font-family: 'Nunito', sans-serif;
 	color: white;
 }
@@ -70,6 +69,10 @@ label:not(#lastSearchedOutput) {
 	float: left;
 }
 
+.page-container{
+	//todo
+}
+
 .page-button{
 	display: flex;
 	justify-content: center;
@@ -85,6 +88,21 @@ label:not(#lastSearchedOutput) {
 
 	-webkit-transition-duration: 0.2s; /* Safari */
   transition-duration: 0.2s;
+}
+
+.page-button-disabled{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	background: rgba(0,0,0, 0.2);
+	border: 1px solid;
+	border-color: #111922;
+	color: white;
+
+	height: 40px;
+	width: 120px;
+	float: right;
 }
 
 #next-page{
