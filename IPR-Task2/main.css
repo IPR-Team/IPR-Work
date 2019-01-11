@@ -157,7 +157,7 @@ td {
 	border-color: #192534;
 }
 
-tr:not(:first-child):hover {
+tr:hover {
 	background-color: rgba(17,25,34,0.8);
 }
 
