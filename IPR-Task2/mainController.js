@@ -8,6 +8,7 @@ var projects = [];
 
 var source = "";
 var searchString = "";
+var date;
 
 var createdDataCounter = 0; // is this used?
 
@@ -120,34 +121,38 @@ function toggleSearchingIndicator(showIndicator){
 }
 
 function searchButtonClicked(){
-  //clicking the search button will just reset the current page and the projects
-  //the actual search for projects has to be sepreated from this function
-  //because the getNextPage() can also initiate a search
   clearProjects();
   currentPage = 1;
+  maxPage = 1;
+  receivedProjects = 0;
+  rowCounter = 0;
   source = getSource();
   searchString = processSearchString(document.getElementById("input").value);
+  date = new Date(Date.now()).toISOString().replace(/[\..+Z]+/g,"+00:00");
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
-  initiateSearch(searchString, source);
+  initiateSearch();
 }
 function initiateSearch(){
   toggleResultTable(false);
   clearTable();
   connectorAPI = getConnector(source);
-  connectorAPI.searchForProjects(searchString, elementsPerPage, currentPage, prepareTable);
+  connectorAPI.searchForProjects(searchString, elementsPerPage, currentPage, date, prepareTable);
   toggleSearchingIndicator(true);
 }
 function getExistingProjects(startRow){
   toggleResultTable(false);
   toggleSearchingIndicator(true);
   clearTable();
+  receivedProjects = 0;
   for(var i = startRow; i < currentPage * elementsPerPage; i++){
     if(typeof projects[i] == "undefined"){
       break;
     }else{
+      receivedProjects++;
       addProjectToTable(projects[i]);
     }
   }
+  checkPages();
   toggleSearchingIndicator(false);
   toggleResultTable(true);
 }
@@ -180,6 +185,9 @@ function checkPages(){
   }
 }
 function getNextPage(){
+  if(document.getElementById("next-page").classList.contains("page-button-disabled")){
+    return;
+  }
   currentPage++;
   if(currentPage > maxPage){
     maxPage = currentPage;
@@ -189,6 +197,9 @@ function getNextPage(){
   }
 }
 function getPreviousPage(){
+  if(document.getElementById("previous-page").classList.contains("page-button-disabled")){
+    return;
+  }
   currentPage--;
   rowCounter = (currentPage-1)*elementsPerPage;
   getExistingProjects(rowCounter);

@@ -1,14 +1,16 @@
 //Constructor and Class
 function GitHubAPIConnector(){
   //public function of object GitHubAPIConnector / each kind of connector do need this function!!!
-  this.searchForProjects = function(search_string, amount_of_results, page, callback){
+  this.searchForProjects = function(search_string, amount_of_results, page, createdBeforeDate, callback){
     //Header: link - ...    auswerten für maximale Anzahl der Seiten
     var url = "https://api.github.com/search/repositories";
     var query = "?q=".concat(search_string);
+    var created = "&created%3A<".concat(createdBeforeDate);
     var maxResults = "&per_page=" + amount_of_results;
     var page = "&page=" + page;
     var sort = "&sort=updated";
-    var url = url.concat(query, maxResults, page,sort);
+    var url = url.concat(query, created, maxResults, page,sort);
+    console.log(url);
     var pullProjectResponse = [];
     fetch(url)
     .then(function(response){

@@ -8,7 +8,7 @@
 
 function BitBucketAPIConnector(){
   //callback ganz wichtig! callback(listOfProjects), damit projekte auf mainHtml dargestellt werden
-  this.searchForProjects = function(search_string, amount_of_results, page, callback){
+  this.searchForProjects = function(search_string, amount_of_results, page, createdBeforeDate, callback){
 
   }
 }
