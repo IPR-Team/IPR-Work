@@ -1,16 +1,18 @@
 var rowCounter = 0;
 var currentPage = 1;
+var maxPage = 1;
 var elementsPerPage = 50;
 var receivedProjects = 0;
-var lastSource = "";
-var lastInput = "";
 var connectorAPI;
+var projects = [];
 
-var projects = []; // is this used?
+var source = "";
+var searchString = "";
+
 var createdDataCounter = 0; // is this used?
 
 function addElementToTable(general, description, source, last_updated, owner, amount_contributors, external_homepage){
-  rowCounter = rowCounter + 1;
+  rowCounter++;
   var table = document.getElementById("resultTable").getElementsByTagName('tbody')[0];
   var newRow = table.insertRow(table.rows.length);
   newRow.setAttribute("id", "row".concat(rowCounter));
@@ -76,36 +78,30 @@ function addProjectToTable(project){
     //save porjects in ram for later proposals?
 }
 
-function matchAndSortProjects(projectList){
-  projectList.sort(function(a, b){ return a.last_updated < b.last_updated });
-  receivedProjects = projectList.length;
-  while(projectList.length > 0){
-    var projectItem = projectList.shift();
-    addProjectToTable(projectItem);
+function matchAndSortProjects(newProjects){
+  newProjects.sort(function(a, b){ return a.last_updated < b.last_updated });
+  projects = projects.concat(newProjects);
+  receivedProjects = newProjects.length;
+  while(newProjects.length > 0){
+    addProjectToTable(newProjects.shift());
   }
-  console.log("Added " + rowCounter + " items to main");
+  console.log("Added " + receivedProjects + " items to main");
 }
 
 function clearTable(){
-  if(rowCounter > 1){
-    while(rowCounter >= 1){
-      var child = document.getElementById("row".concat(rowCounter));
-      child.remove();
-      rowCounter--;
-    }
-  }
+  document.getElementById("resultTable").getElementsByTagName('tbody')[0].innerHTML = "";
+}
+function clearProjects(){
+  projects = [];
 }
 
 function processSearchString(searchString){
-  var newSearchString = searchString.replace(/[^\w\d]+/g," ");
-  newSearchString = newSearchString.trim().toLowerCase();
-  newSearchString = newSearchString.replace(/\s+/g,"+");
-  return newSearchString;
+  return searchString.replace(/[^\w\d]+/g," ").trim().toLowerCase().replace(/\s+/g,"+");
 }
 
-function showResultTable(value){
+function toggleResultTable(showTable){
   var table = document.getElementById("resultArea");
-  if(value === true){
+  if(showTable){
 	  table.style.display = "block";
     checkPages();
     updateDisplayedPage()
@@ -114,9 +110,9 @@ function showResultTable(value){
   }
 }
 
-function showSearchingIndicator(value){
+function toggleSearchingIndicator(showIndicator){
   var searchingIndicator = document.getElementById("searchingIndicator");
-  if(value === true){
+  if(showIndicator){
     searchingIndicator.style.display = "block";
   }else{
     searchingIndicator.style.display = "none";
@@ -124,26 +120,41 @@ function showSearchingIndicator(value){
 }
 
 function searchButtonClicked(){
-  showResultTable(false);
-  clearTable();
-  var source = getSource();
-  var searchString = document.getElementById("input").value;
-  // resetting the page, if the user changes the source or the searched keyword while he already skipped through some pages
-  if(lastSource != source || lastInput != searchString){
-    lastSource = source;
-    lastInput = searchString;
-    currentPage = 1;
-  }
+  //clicking the search button will just reset the current page and the projects
+  //the actual search for projects has to be sepreated from this function
+  //because the getNextPage() can also initiate a search
+  clearProjects();
+  currentPage = 1;
+  source = getSource();
+  searchString = processSearchString(document.getElementById("input").value);
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
-  searchString = processSearchString(searchString);
+  initiateSearch(searchString, source);
+}
+function initiateSearch(){
+  toggleResultTable(false);
+  clearTable();
   connectorAPI = getConnector(source);
   connectorAPI.searchForProjects(searchString, elementsPerPage, currentPage, prepareTable);
-  showSearchingIndicator(true);
+  toggleSearchingIndicator(true);
+}
+function getExistingProjects(startRow){
+  toggleResultTable(false);
+  toggleSearchingIndicator(true);
+  clearTable();
+  for(var i = startRow; i < currentPage * elementsPerPage; i++){
+    if(typeof projects[i] == "undefined"){
+      break;
+    }else{
+      addProjectToTable(projects[i]);
+    }
+  }
+  toggleSearchingIndicator(false);
+  toggleResultTable(true);
 }
 function prepareTable(projects){
   matchAndSortProjects(projects);
-  showSearchingIndicator(false);
-  showResultTable(true);
+  toggleSearchingIndicator(false);
+  toggleResultTable(true);
 }
 function getSource(){
   var sources = document.getElementsByName('source');
@@ -170,11 +181,17 @@ function checkPages(){
 }
 function getNextPage(){
   currentPage++;
-  searchButtonClicked();
+  if(currentPage > maxPage){
+    maxPage = currentPage;
+    initiateSearch();
+  }else{
+    getExistingProjects(rowCounter);
+  }
 }
 function getPreviousPage(){
   currentPage--;
-  searchButtonClicked();
+  rowCounter = (currentPage-1)*elementsPerPage;
+  getExistingProjects(rowCounter);
 }
 function updateDisplayedPage(){
   document.getElementById("displayed-page").innerHTML = currentPage;
