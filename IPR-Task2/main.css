@@ -44,121 +44,50 @@ body {
 }
 
 .radio-group {
-	width: 200px;
-	margin: 10px;
-	display: flex;
-}
-
-label:not(#lastSearchedOutput) {
-	display: inline-block;
-	width: 100%;
-	height: 100%;
-	margin: auto;
-  padding: 0px 15px;
+	position: relative;
+	display: block;
+	width: 5%;
+	margin: 20px;
+	padding-left: 32px;
 	cursor: pointer;
 }
 
-#picture {
-  width:64px;
-  height:64px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.8);
-}
-
-#last-search{
-	display: inline-block;
-	float: left;
-}
-
-.page-container{
-	//todo
-}
-
-.page-button{
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background: rgba(255,255,255, 0.1);
-	border: 1px solid;
-	border-color: #111922;
-	color: white;
-	cursor: pointer;
-	height: 40px;
-	width: 120px;
-	float: right;
-
-	-webkit-transition-duration: 0.2s; /* Safari */
-  transition-duration: 0.2s;
-}
-
-.page-button-disabled{
-	display: flex;
-	justify-content: center;
-	align-items: center;
-
-	background: rgba(0,0,0, 0.2);
-	border: 1px solid;
-	border-color: #111922;
-	color: white;
-
-	height: 40px;
-	width: 120px;
-	float: right;
-}
-
-#next-page{
-	border-left: 0px;
-}
-
-#previous-page{
-	border-right: 0px;
-}
-
-.page-button:hover{
-	background: rgba(255,255,255, 0.8);
-	color:black;
-}
-
-.page-label{
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background: rgba(255,255,255, 0.1);
-	border: 1px solid;
-	border-color: #111922;
-	color: white;
-	height: 40px;
-	width: 120px;
-	float: right;
-}
-
-#resultTable {
-	border-collapse: collapse;
-	width: 100%;
-	box-shadow: 0 0 20px rgba(0,0,0,0.4);
-}
-
-#resultArea {
+.radio-group input{
 	display: none;
 }
 
-th, td {
-	padding: 10px;
-	text-align: left;
-	font-size: 14px;
+.radio-group .radio-circle{
+	display: inline-block;
+	position: absolute;
+	left: 0;
+  height: 18px;
+	width: 18px;
+	border: 1px solid;
+	border-radius: 50%;
+	border-color: #111922;
+	background: rgba(255,255,255, 0.1);
+	-webkit-transition-duration: 0.2s; /* Safari */
+	transition-duration: 0.2s;
 }
 
-th {
-	background-color: #192534;
+.radio-group:hover .radio-circle{
+	background: rgba(255,255,255, 0.8);
 }
 
-td {
-	background-color: rgba(17,25,34,0.5);
-	border-bottom: 2px solid;
-	border-color: #192534;
+.radio-group input:checked + .radio-circle{
+	background: #192534;
 }
 
-tr:hover {
-	background-color: rgba(17,25,34,0.8);
+.radio-group input:checked + .radio-circle:after{
+	position: absolute;
+	height: 10px;
+	width: 10px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	content: "";
+	border-radius: 50%;
+	background: #405267;
 }
 
 .project-search {
@@ -199,4 +128,103 @@ tr:hover {
 }
 .project-search button:focus {
 	outline: 0;
+}
+
+#resultArea {
+	display: none;
+}
+
+#last-search{
+	display: inline-block;
+	float: left;
+}
+
+.page-container .page-button{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: rgba(255,255,255, 0.1);
+	border: 1px solid;
+	border-color: #111922;
+	color: white;
+	cursor: pointer;
+	height: 40px;
+	width: 120px;
+	float: right;
+
+	-webkit-transition-duration: 0.2s; /* Safari */
+  transition-duration: 0.2s;
+}
+
+.page-container .page-button:hover{
+	background: rgba(255,255,255, 0.8);
+	color:black;
+}
+
+.page-container .page-button-disabled{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	background: rgba(0,0,0, 0.2);
+	border: 1px solid;
+	border-color: #111922;
+	color: white;
+
+	height: 40px;
+	width: 120px;
+	float: right;
+}
+
+.page-container #next-page{
+	border-left: 0px;
+}
+
+.page-container #previous-page{
+	border-right: 0px;
+}
+
+.page-container .page-label{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: rgba(255,255,255, 0.1);
+	border: 1px solid;
+	border-color: #111922;
+	color: white;
+	height: 40px;
+	width: 120px;
+	float: right;
+}
+
+#resultTable {
+	border-collapse: collapse;
+	width: 100%;
+	box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+th, td {
+	padding: 10px;
+	text-align: left;
+	font-size: 14px;
+}
+
+th {
+	background-color: #192534;
+}
+
+td {
+	background-color: rgba(17,25,34,0.5);
+	border-bottom: 2px solid;
+	border-color: #192534;
+}
+
+tr:hover {
+	background-color: rgba(17,25,34,0.8);
+}
+
+#picture {
+  width:64px;
+  height:64px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.8);
 }
