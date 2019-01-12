@@ -169,23 +169,32 @@ function getSource(){
     }
   }
 }
+
 function checkPages(){
+  var previousButtons = document.getElementsByClassName("previous-page");
+  var nextButtons = document.getElementsByClassName("next-page");
   if(currentPage == 1){
-    document.getElementById("previous-page").className = "page-button-disabled";
+    for(var i = 0; i < previousButtons.length; i++){
+      previousButtons[i].className = "page-button-disabled previous-page";
+    }
   }else{
-    document.getElementById("previous-page").className = "page-button";
+    for(var i = 0; i < previousButtons.length; i++){
+      previousButtons[i].className = "page-button previous-page";
+    }
   }
-  // THIS DOES NOT COVER ALL POSSIBILITES! EXAMPLE: elementsPerPage = 50 and the last page returns 50 elements
-  // -> the website would still show the next page button
-  // GitHub shows a totalcount of results, but I did not find something similar for GitLab
   if(receivedProjects < elementsPerPage){
-    document.getElementById("next-page").className = "page-button-disabled";
+    for(var i = 0; i < nextButtons.length; i++){
+      nextButtons[i].className = "page-button-disabled next-page";
+    }
   }else{
-    document.getElementById("next-page").className = "page-button";
+    for(var i = 0; i < nextButtons.length; i++){
+      nextButtons[i].className = "page-button next-page";
+    }
   }
 }
+
 function getNextPage(){
-  if(document.getElementById("next-page").classList.contains("page-button-disabled")){
+  if(document.getElementsByClassName("next-page")[0].classList.contains("page-button-disabled")){
     return;
   }
   currentPage++;
@@ -196,14 +205,19 @@ function getNextPage(){
     getExistingProjects(rowCounter);
   }
 }
+
 function getPreviousPage(){
-  if(document.getElementById("previous-page").classList.contains("page-button-disabled")){
+  if(document.getElementsByClassName("previous-page")[0].classList.contains("page-button-disabled")){
     return;
   }
   currentPage--;
   rowCounter = (currentPage-1)*elementsPerPage;
   getExistingProjects(rowCounter);
 }
+
 function updateDisplayedPage(){
-  document.getElementById("displayed-page").innerHTML = currentPage;
+  var pageLabels = document.getElementsByClassName("displayed-page");
+  for(var i = 0; i < pageLabels.length; i++){
+    pageLabels[i].innerHTML = currentPage;
+  }
 }

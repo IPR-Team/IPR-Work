@@ -41,10 +41,10 @@
 			<br/>
 			<div id="resultArea">
 				<p id="last-search">Results for '<label id="lastSearchedOutput">Error!</label>':</p>
-				<div class="page-container">
-					<div class="page-button" id="next-page" onclick="getNextPage()">Next</div>
-					<div class="page-label" id="displayed-page"></div>
-					<div class="page-button" id="previous-page" onclick="getPreviousPage()">Previous</div>
+				<div class="page-container-top">
+					<div class="page-button previous-page" onclick="getPreviousPage()">Previous</div>
+					<div class="page-label displayed-page"></div>
+					<div class="page-button next-page" onclick="getNextPage()">Next</div>
 				</div>
 				<table id="resultTable">
 					<thead>
@@ -62,7 +62,11 @@
 					<tbody>
 					</tbody>
 				</table>
-			</div>
+				<div class="page-container-bottom">
+					<div class="page-button previous-page" onclick="getPreviousPage()">Previous</div>
+					<div class="page-label displayed-page"></div>
+					<div class="page-button next-page" onclick="getNextPage()">Next</div>
+				</div>
 			<div id="searchingIndicator" style="display: none;">
 				<p>Searching...</p>
 			</div>
