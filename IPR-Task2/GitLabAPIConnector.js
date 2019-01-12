@@ -1,5 +1,5 @@
 //info:
-//Contributors: https://docs.gitlab.com/ce/api/repositories.html / /projects/:id/members
+//Contributors: https://docs.gitlab.com/ce/api/members.html / /projects/:id/members
 //Projects: https://docs.gitlab.com/ce/api/search.html
 
 function GitLabAPIConnector(){
@@ -30,8 +30,60 @@ function GitLabAPIConnector(){
         pullProjectResponse.push(parseObjectToProjectData(object[i]));
       }
       callback(pullProjectResponse);
-    }).
-    catch(function(error){
+    })
+    .catch(function(error){
+      console.log(error);
+    });
+  }
+
+  this.getProjectDetails = function (project_name, owner_name, callback) {
+    var project = {};
+    for(var i = 0; i < pullProjectResponse.length; i++){
+      project = pullProjectResponse[i];
+      if(project.general.name === project_name && project.owner.name === owner_name){
+        completeProjectData(project, callback);
+        break;
+      }
+    }
+  }
+
+  //use this function to get complete data set of a project
+  var completeProjectData = function(project, callback){
+    var url = "https://gitlab.com/api/v4"
+    var accessToken = "?private_token=zsPXGhyv5Rn4ss9W7f2u";
+    var query = "/projects/".concat(project.owner.name, "%2F", project.general.name,, "/members")
+    url = url.concat(query, accessToken);
+    fetch(url)
+    .then(function(response){
+      if(response.ok){
+        console.log("Requested: " + url);
+        var data_bunch = {}
+        data_bunch.project = project;
+        data_bunch.object = response.json();
+        return data_bunch;
+      }else{
+        throw new Error("Request could not be executed! The request limit may have been reached.");
+      }
+    })
+    .then(function(data_bunch){
+      var object = data_bunch.object;
+      var project = data_bunch.project;
+      project.amount_contributors = object.length;
+
+      var owner;
+      for(var i = 0; i < object.length; i++){
+        var contributor = object[i];
+        if(contributor.acces_level === 40 || contributor.access_level === 50){
+          project.owner.name = contributor.username;
+          project.owner.url = contributor.web_url; // TODO: fraglich
+          project.owner.image = contributor.avatar_url;
+          break;
+        }
+      }
+
+      callback(project);
+    })
+    .catch(function(error){
       console.log(error);
     });
   }

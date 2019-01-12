@@ -35,18 +35,18 @@ function GitHubAPIConnector(){
   }
 
   //use this function to get complete data set of a project
-  this.getProjectDetails = function (id, callback) {
+  this.getProjectDetails = function (project_name, owner_name, callback) {
     var project = {};
     for(var i = 0; i < pullProjectResponse.length; i++){
       project = pullProjectResponse[i];
-      if(project.id === id){
+      if(project.general.name === project_name && project.owner.name === owner_name){
         completeProjectData(project, callback);
         break;
       }
     }
   }
 
-  var completeProjectData(project, callback){
+  var completeProjectData = function (project, callback){
     var url = "https://api.github.com"
     var query = "/repos/".concat(project.owner.name, "/", project.general.name, "/stats/contributors")
     url = url.concat(query);
@@ -67,8 +67,8 @@ function GitHubAPIConnector(){
       var project = data_bunch.project;
       project.amount_contributors = object.length;
       callback(project);
-    }).
-    catch(function(error){
+    })
+    .catch(function(error){
       console.log(error);
     });
   }
