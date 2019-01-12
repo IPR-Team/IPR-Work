@@ -33,6 +33,46 @@ function GitHubAPIConnector(){
       console.log(error);
     });
   }
+
+  //use this function to get complete data set of a project
+  this.getProjectDetails = function (id, callback) {
+    var project = {};
+    for(var i = 0; i < pullProjectResponse.length; i++){
+      project = pullProjectResponse[i];
+      if(project.id === id){
+        completeProjectData(project, callback);
+        break;
+      }
+    }
+  }
+
+  var completeProjectData(project, callback){
+    var url = "https://api.github.com"
+    var query = "/repos/".concat(project.owner.name, "/", project.general.name, "/stats/contributors")
+    url = url.concat(query);
+    fetch(url)
+    .then(function(response){
+      if(response.ok){
+        console.log("Requested: " + url);
+        var data_bunch = {}
+        data_bunch.project = project;
+        data_bunch.object = response.json();
+        return data_bunch;
+      }else{
+        throw new Error("Request could not be executed! The request limit may have been reached.");
+      }
+    })
+    .then(function(data_bunch){
+      var object = data_bunch.object;
+      var project = data_bunch.project;
+      project.amount_contributors = object.length;
+      callback(project);
+    }).
+    catch(function(error){
+      console.log(error);
+    });
+  }
+
   //private function: Shortened description by triming full string
   var processDescription = function(description){
     if(description != null){
