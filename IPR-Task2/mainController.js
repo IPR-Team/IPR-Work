@@ -12,11 +12,12 @@ var date;
 
 var createdDataCounter = 0; // is this used?
 
-function addElementToTable(general, description, source, last_updated, owner, amount_contributors, external_homepage){
+function addElementToTable(general, description, source, last_updated){
   rowCounter++;
   var table = document.getElementById("resultTable").getElementsByTagName('tbody')[0];
   var newRow = table.insertRow(table.rows.length);
-  newRow.setAttribute("id", "row".concat(rowCounter));
+  newRow.setAttribute("id", rowCounter);
+  newRow.addEventListener('click', tableElementClicked, false);
 
   var idCell = newRow.insertCell(0);
   var idElement = document.createTextNode(rowCounter);
@@ -45,37 +46,95 @@ function addElementToTable(general, description, source, last_updated, owner, am
   var updatedCell = newRow.insertCell(4);
   var updatedElement = document.createTextNode(last_updated);
   updatedCell.appendChild(updatedElement);
+}
 
-  var ownerCell = newRow.insertCell(5);
-  var ownerName = document.createTextNode(owner.name);
-  var ownerUrl = document.createTextNode(owner.url);
+function tableElementClicked(element){
+  var id = element.target.parentElement.id;
+  console.log(id);
+  var selectedProject = projects[id-1];
+  var selectedRow = document.getElementById(id);
+  if(selectedRow.classList.contains("extended-tablecell")){
+    document.getElementById("extended-details").remove();
+    selectedRow.classList.remove("extended-tablecell");
+    return;
+  }
+  var extendedRow = document.getElementsByClassName("extended-tablecell");
+  if(extendedRow.length > 0){
+    document.getElementById("extended-details").remove();
+    extendedRow[0].classList.remove("extended-tablecell");
+  }
+  selectedRow.className = "extended-tablecell";
+  if(source == "GitHub"){
+    connectorAPI.getProjectDetails(id, selectedProject, extendContent);
+    //extendContent(id, selectedProject);
+  }else{
+    extendContent(id, selectedProject);
+  }
+}
+
+function extendContent(id, project){
+  if(id > elementsPerPage){
+    id = id % elementsPerPage;
+  }
+  var table = document.getElementById("resultTable").getElementsByTagName('tbody')[0];
+  var newRow = table.insertRow(id);
+  newRow.setAttribute("id", "extended-details");
+
+  var projectDetails = newRow.insertCell(0);
+  projectDetails.colSpan = "8";
+
+  var detailsContainer = document.createElement('div');
+  detailsContainer.className = "details-container";
+
+  var ownerHeader = document.createTextNode("Project owner:");
+  ownerHeader.className = "picheader";
+
+  var ownerName = document.createTextNode(project.owner.name);
+  ownerName.className = "name";
+
+  var ownerUrl = document.createTextNode(project.owner.url);
+  ownerUrl.className = "url";
+
   var ownerImage = document.createElement("img");
-  ownerImage.setAttribute("src", owner.image);
-  ownerImage.setAttribute("id", "picture");
-  ownerCell.appendChild(ownerImage);
-  ownerCell.appendChild(document.createElement("br"));
-  ownerCell.appendChild(ownerName);
-  ownerCell.appendChild(document.createElement("br"));
-  ownerCell.appendChild(ownerUrl);
+  ownerImage.className = "picture";
+  ownerImage.setAttribute("src", project.owner.image);
 
-  var contributorsCell = newRow.insertCell(6);
-  var contributorsElement = document.createTextNode(amount_contributors);
-  contributorsCell.appendChild(contributorsElement);
+  var contributorsHeader = document.createTextNode("Amount of contributors:");
+  contributorsHeader.className = "contributorsheader";
 
-  var homepageCell = newRow.insertCell(7);
+  var contributorsElement;
+  if(typeof project.amount_contributors == "undefined"){
+    contributorsElement = document.createTextNode("0");
+  }else{
+    contributorsElement = document.createTextNode(project.amount_contributors);
+  }
+  contributorsElement.className = "contributors";
+
+  var homepageHeader = document.createTextNode("External homepage:");
+  homepageHeader.className = "homepageheader";
+
   var homepageElement;
-  if(external_homepage == null){
+  if(project.external_homepage == null){
     homepageElement = document.createTextNode("-");
   }else{
-    homepageElement = document.createTextNode(external_homepage);
+    homepageElement = document.createTextNode(project.external_homepage);
   }
-  homepageCell.appendChild(homepageElement);
+  homepageElement.className = "homepage";
+
+  detailsContainer.appendChild(ownerHeader);
+  detailsContainer.appendChild(ownerName);
+  detailsContainer.appendChild(ownerUrl);
+  detailsContainer.appendChild(ownerImage);
+  detailsContainer.appendChild(contributorsHeader);
+  detailsContainer.appendChild(contributorsElement);
+  detailsContainer.appendChild(homepageHeader);
+  detailsContainer.appendChild(homepageElement);
+  projectDetails.appendChild(detailsContainer);
 }
 
 //Will be accessed by connectors!
 function addProjectToTable(project){
-  addElementToTable(project.general, project.description, project.source, project.last_updated,
-    project.owner, project.amount_contributors, project.external_homepage);
+  addElementToTable(project.general, project.description, project.source, project.last_updated);
     //save porjects in ram for later proposals?
 }
 
