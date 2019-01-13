@@ -51,7 +51,7 @@ function GitLabAPIConnector(){
   var completeProjectData = function(project, callback){
     var url = "https://gitlab.com/api/v4"
     var accessToken = "?private_token=zsPXGhyv5Rn4ss9W7f2u";
-    var query = "/projects/".concat(project.owner.name, "%2F", project.general.name,, "/members")
+    var query = "/projects/".concat(project.owner.name, "%2F", project.general.name, "/members");
     url = url.concat(query, accessToken);
     fetch(url)
     .then(function(response){
