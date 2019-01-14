@@ -11,7 +11,6 @@ function GitHubAPIConnector(){
     var page = "&page=" + page;
     var sort = "&sort=updated";
     var url = url.concat(query, created, maxResults, page,sort);
-    console.log(url);
     var pullProjectResponse = [];
     fetch(url)
     .then(function(response){
