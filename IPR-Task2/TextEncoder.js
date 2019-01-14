@@ -1,10 +1,12 @@
 function TextEncoder(){
   this.EncodeUrl = function (text) {
-    var regex = ""
-    var match = text.search(regex);
+    console.log("Text for encoding: " + text);
+    var match = text.search(/[\s\:/\?#\[\]\@\!\$\&'\(\)\*\,;=]/);
     while(match >= 0){
-      text[match] = getUrlEncodedSign(text[match]);
-      match = text.search(regex);
+      var newSign = getUrlEncodedSign(text.charAt(match));
+      text = text.substring(0, match) + newSign + text.substring(match + 1, text.length);
+      console.log("\'" + text.charAt(match) + "\': " + match + "->" + newSign + " | " + text);
+      match = text.search(/[\s\:/\?#\[\]\@\!\$\&'\(\)\*\,;=]/);
     }
 
     return text;
@@ -13,7 +15,7 @@ function TextEncoder(){
   var getUrlEncodedSign = function (sign) {
     switch(sign){
       case " ":
-        return "%20";
+        return "+";
       case ":":
         return "%3A";
       case "/":
@@ -42,8 +44,6 @@ function TextEncoder(){
         return "%29";
       case "*":
         return "%2A";
-      case "+":
-        return "%2B";
       case ",":
         return "%2c";
       case ";":
