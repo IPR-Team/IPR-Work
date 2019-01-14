@@ -1,12 +1,12 @@
+// // TODO: NextPage muss abhängig von der projects.length sein, nicht von der maxPage
 var rowCounter = 0;
 var currentPage = 1;
-var maxPage = 1;
 var elementsPerPage = 50;
 var receivedProjects = 0;
-var connectorAPI;
+var connectorCallbacks = 0;
+var connectorAPIs = [];
 var projects = [];
-
-var source = "";
+var sources = [];
 var searchString = "";
 var date;
 
@@ -50,25 +50,50 @@ function addElementToTable(general, description, source, last_updated){
 
 function tableElementClicked(element){
   var id = element.target.parentElement.id;
-  console.log(id);
   var selectedProject = projects[id-1];
   var selectedRow = document.getElementById(id);
   if(selectedRow.classList.contains("extended-tablecell")){
     document.getElementById("extended-details").remove();
     selectedRow.classList.remove("extended-tablecell");
     return;
+  }else{
+    closeExtendedDetails();
   }
+  selectedRow.className = "extended-tablecell";
+  var connector;
+  if(selectedProject.source == "GitHub"){
+    connector = getSourceConnector("GitHub");
+    connector.getProjectDetails(id, selectedProject, extendContent);
+    //extendContent(id, selectedProject);
+  }else{
+    extendContent(id, selectedProject);
+  }
+}
+
+function closeExtendedDetails(){
   var extendedRow = document.getElementsByClassName("extended-tablecell");
   if(extendedRow.length > 0){
     document.getElementById("extended-details").remove();
     extendedRow[0].classList.remove("extended-tablecell");
   }
-  selectedRow.className = "extended-tablecell";
-  if(source == "GitHub"){
-    connectorAPI.getProjectDetails(id, selectedProject, extendContent);
-    //extendContent(id, selectedProject);
-  }else{
-    extendContent(id, selectedProject);
+}
+
+function getSourceConnector(source){
+  var connector;
+  for(var i = 0; i < connectorAPIs.length; i++){
+    connector = connectorAPIs[i];
+    switch(source){
+      case "GitHub":
+        if( connector instanceof GitHubAPIConnector){
+          return connector;
+        }
+        break;
+      case "GitLab":
+        if( connector instanceof GitLabAPIConnector){
+          return connector;
+          break;
+        }
+    }
   }
 }
 
@@ -139,20 +164,19 @@ function addProjectToTable(project){
 }
 
 function matchAndSortProjects(newProjects){
-  newProjects.sort(function(a, b){ return a.last_updated < b.last_updated });
   projects = projects.concat(newProjects);
-  receivedProjects = newProjects.length;
-  while(newProjects.length > 0){
-    addProjectToTable(newProjects.shift());
+  projects.sort(function(a, b){ return a.last_updated < b.last_updated });
+  receivedProjects += newProjects.length;
+  if(connectorCallbacks == connectorAPIs.length){
+    while(newProjects.length > 0){
+      addProjectToTable(newProjects.shift());
+    }
+    console.log("Added " + receivedProjects + " items to main");
   }
-  console.log("Added " + receivedProjects + " items to main");
 }
 
 function clearTable(){
   document.getElementById("resultTable").getElementsByTagName('tbody')[0].innerHTML = "";
-}
-function clearProjects(){
-  projects = [];
 }
 
 function processSearchString(searchString){
@@ -180,24 +204,33 @@ function toggleSearchingIndicator(showIndicator){
 }
 
 function searchButtonClicked(){
-  clearProjects();
+  sources = [];
+  projects = [];
+  connectorAPIs = [];
+
+  getSources();
+  getConnectors();
   currentPage = 1;
   maxPage = 1;
   receivedProjects = 0;
   rowCounter = 0;
-  source = getSource();
+
   searchString = processSearchString(document.getElementById("input").value);
   date = new Date(Date.now()).toISOString().replace(/[\..+Z]+/g,"+00:00");
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   initiateSearch();
 }
+
 function initiateSearch(){
   toggleResultTable(false);
   clearTable();
-  connectorAPI = getConnector(source);
-  connectorAPI.searchForProjects(searchString, elementsPerPage, currentPage, date, prepareTable);
+  connectorCallbacks = 0;
+  for(var i = 0; i < connectorAPIs.length; i++){
+    connectorAPIs[i].searchForProjects(searchString, elementsPerPage, currentPage, date, prepareTable);
+  }
   toggleSearchingIndicator(true);
 }
+
 function getExistingProjects(startRow){
   toggleResultTable(false);
   toggleSearchingIndicator(true);
@@ -215,16 +248,27 @@ function getExistingProjects(startRow){
   toggleSearchingIndicator(false);
   toggleResultTable(true);
 }
-function prepareTable(projects){
-  matchAndSortProjects(projects);
-  toggleSearchingIndicator(false);
-  toggleResultTable(true);
+
+function getConnectors(){
+  for(var i = 0; i < sources.length; i++){
+    connectorAPIs.push(getConnector(sources[i]));
+  }
 }
-function getSource(){
-  var sources = document.getElementsByName('source');
-  for (var i = 0; i < sources.length; i++){
-    if (sources[i].checked){
-      return sources[i].id;
+
+function prepareTable(projects){
+  connectorCallbacks++;
+  matchAndSortProjects(projects);
+  if(connectorCallbacks == connectorAPIs.length){
+    toggleSearchingIndicator(false);
+    toggleResultTable(true);
+  }
+}
+
+function getSources(){
+  var checkboxes = document.getElementsByName('source');
+  for (var i = 0; i < checkboxes.length; i++){
+    if (checkboxes[i].checked){
+      sources.push(checkboxes[i].id);
     }
   }
 }
@@ -253,12 +297,12 @@ function checkPages(){
 }
 
 function getNextPage(){
+  closeExtendedDetails();
   if(document.getElementsByClassName("next-page")[0].classList.contains("page-button-disabled")){
     return;
   }
   currentPage++;
-  if(currentPage > maxPage){
-    maxPage = currentPage;
+  if((currentPage * elementsPerPage) > projects.length){
     initiateSearch();
   }else{
     getExistingProjects(rowCounter);
@@ -266,6 +310,7 @@ function getNextPage(){
 }
 
 function getPreviousPage(){
+  closeExtendedDetails();
   if(document.getElementsByClassName("previous-page")[0].classList.contains("page-button-disabled")){
     return;
   }

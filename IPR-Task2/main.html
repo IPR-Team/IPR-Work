@@ -21,18 +21,13 @@
 		<div class="body-container">
 			<h3>Select the data source:</h3>
 			<form>
-				<label class="radio-group">BitBucket
-					<!--TODO: set checked unique and repeatly-->
-					<input id="BitBucket" name="source" type="radio">
-					<span class="radio-circle"/>
+				<label class="checkbox-group">GitHub
+					<input id="GitHub" name="source" type="checkbox" checked="yes">
+					<span class="checkbox"/>
 				</label>
-				<label class="radio-group">GitHub
-					<input id="GitHub" name="source" type="radio" checked="yes">
-					<span class="radio-circle"/>
-				</label>
-				<label class="radio-group">GitLab
-					<input id="GitLab" name="source" type="radio">
-					<span class="radio-circle"/>
+				<label class="checkbox-group">GitLab
+					<input id="GitLab" name="source" type="checkbox">
+					<span class="checkbox"/>
 				</label>
 			</form>
 			<h3>Search for projects:</h3>
@@ -50,9 +45,9 @@
 				</div>
 				<table id="resultTable">
 					<definition>
-						<col style="width:10%">
-						<col style="width:20%">
-						<col style="width:50%">
+						<col style="width:5%">
+						<col style="width:30%">
+						<col style="width:45%">
 						<col style="width:5%">
 						<col style="width:15%">
 					</definition>
