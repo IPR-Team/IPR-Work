@@ -7,15 +7,7 @@ function GitLabAPIConnector(){
   var statusCode = 200;
   //public function of object GitHubAPIConnector / each kind of connector do need this function!!!
   this.searchForProjects = function(search_string, amount_of_results, page, createdBeforeDate, callback){
-
-    //var callback = function(text){
-      //console.log(text);
-    //}
-    //var translator = new TextTranslator();
-    //var textArray = [];
-    //textArray.push("Hallo. Ich bins!");
-    //translator.translateText(textArray, 'en', callback);
-
+    
     // It seems like the date cant be included in the search API
     var url = "https://gitlab.com/api/v4/search";
     var query = "&search=".concat(search_string);
