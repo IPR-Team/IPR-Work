@@ -8,6 +8,14 @@ function GitLabAPIConnector(){
   //public function of object GitHubAPIConnector / each kind of connector do need this function!!!
   this.searchForProjects = function(search_string, amount_of_results, page, createdBeforeDate, callback){
 
+    //var callback = function(text){
+      //console.log(text);
+    //}
+    //var translator = new TextTranslator();
+    //var textArray = [];
+    //textArray.push("Hallo. Ich bins!");
+    //translator.translateText(textArray, 'en', callback);
+
     // It seems like the date cant be included in the search API
     var url = "https://gitlab.com/api/v4/search";
     var query = "&search=".concat(search_string);
@@ -43,7 +51,7 @@ function GitLabAPIConnector(){
   this.getProjectDetails = function (id, project, callback) {
     var url = "https://gitlab.com/api/v4"
     var accessToken = "?private_token=zsPXGhyv5Rn4ss9W7f2u";
-    var specificPath = encoder.EncodeUrl(project.owner.name.concat("/", project.general.name));
+    var specificPath = encoder.EncodeUrl(project.owner.name.concat("/", project.general.name.replace(/[\s]/g, "-")));
     console.log("Specific path: " + specificPath);
     var query = "/projects/".concat(specificPath, "/members");
     url = url.concat(query, accessToken);
