@@ -1,4 +1,5 @@
 function TextTranslator(){
+  var encoder = new TextEncoder();
   //text = array, targetLanguageKey: f.e. ru, de, en
   this.translateText = function (text, targetLanguageKey, callback){
     var url = "https://translate.yandex.net/api/v1.5/tr.json/translate";
@@ -6,12 +7,13 @@ function TextTranslator(){
     var content = "";
     var lang = "&lang=".concat(targetLanguageKey)
     for(var i = 0; i < text.length; i++){
-      content = content.concat("&text='", text[i], "'");
+      content = content.concat("&text=", encoder.EncodeUrl(text[i]));
     }
+    url = url.concat(key, content, lang);
     fetch(url)
     .then(function(response){
+      console.log("Requested: " + url);
       if(response.ok){
-        console.log("Requested: " + url);
         return response.json();
       }else{
         throw new Error("Translation query could not be executed! Maybe url string contains to many signs.");
@@ -19,6 +21,7 @@ function TextTranslator(){
     })
     .then(function(jsonString){
       var contentParts = jsonString.text;
+      console.log(jsonString);
       console.log("Received " + jsonString.text + " translated content parts");
       var translatedContentParts = cleanContent(contentParts);
       callback(translatedContentParts);

@@ -5,7 +5,6 @@ function TextEncoder(){
     while(match >= 0){
       var newSign = getUrlEncodedSign(text.charAt(match));
       text = text.substring(0, match) + newSign + text.substring(match + 1, text.length);
-      console.log("\'" + text.charAt(match) + "\': " + match + "->" + newSign + " | " + text);
       match = text.search(/[\s\:/\?#\[\]\@\!\$\&'\(\)\*\,;=]/);
     }
 
@@ -15,7 +14,7 @@ function TextEncoder(){
   var getUrlEncodedSign = function (sign) {
     switch(sign){
       case " ":
-        return "+";
+        return "%20";
       case ":":
         return "%3A";
       case "/":
