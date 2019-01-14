@@ -3,8 +3,11 @@
 //Projects: https://docs.gitlab.com/ce/api/search.html
 
 function GitLabAPIConnector(){
+  var encoder = new TextEncoder();
+  var statusCode = 200;
   //public function of object GitHubAPIConnector / each kind of connector do need this function!!!
   this.searchForProjects = function(search_string, amount_of_results, page, createdBeforeDate, callback){
+    
     // It seems like the date cant be included in the search API
     var url = "https://gitlab.com/api/v4/search";
     var query = "&search=".concat(search_string);
@@ -16,72 +19,62 @@ function GitLabAPIConnector(){
     var pullProjectResponse = [];
     fetch(url)
     .then(function(response){
-      if(response.ok){
-        console.log("Requested: " + url);
-        return response.json();
-      }else{
-        throw new Error("Search results konnte nicht geladen werden!");
-      }
+      statusCode = response.status;
+      return response.json();
     })
     .then(function(jsonString){
-      var object = jsonString;
-      console.log("Received " + object.length + " items");
-      for(i = 0; i < object.length; i++){
-        pullProjectResponse.push(parseObjectToProjectData(object[i]));
+      console.log(jsonString);
+      if(statusCode < 299 && statusCode >= 200){
+        var object = jsonString;
+        console.log("Received " + object.length + " items");
+        for(i = 0; i < object.length; i++){
+          pullProjectResponse.push(parseObjectToProjectData(object[i]));
+        }
+        callback(pullProjectResponse);
+      }else{
+        throw new Error("Request: " + jsonString.message);
       }
-      callback(pullProjectResponse);
     })
     .catch(function(error){
       console.log(error);
     });
   }
 
-  this.getProjectDetails = function (project_name, owner_name, callback) {
-    var project = {};
-    for(var i = 0; i < pullProjectResponse.length; i++){
-      project = pullProjectResponse[i];
-      if(project.general.name === project_name && project.owner.name === owner_name){
-        completeProjectData(project, callback);
-        break;
-      }
-    }
-  }
-
-  //use this function to get complete data set of a project
-  var completeProjectData = function(project, callback){
+  this.getProjectDetails = function (id, project, callback) {
     var url = "https://gitlab.com/api/v4"
     var accessToken = "?private_token=zsPXGhyv5Rn4ss9W7f2u";
-    var query = "/projects/".concat(project.owner.name, "%2F", project.general.name, "/members");
+    var specificPath = encoder.EncodeUrl(project.owner.name.concat("/", project.general.name.replace(/[\s]/g, "-")));
+    console.log("Specific path: " + specificPath);
+    var query = "/projects/".concat(specificPath, "/members");
     url = url.concat(query, accessToken);
     fetch(url)
     .then(function(response){
-      if(response.ok){
-        console.log("Requested: " + url);
-        var data_bunch = {}
-        data_bunch.project = project;
-        data_bunch.object = response.json();
-        return data_bunch;
-      }else{
-        throw new Error("Request could not be executed! The request limit may have been reached.");
-      }
+      console.log("Requested: " + url);
+      statusCode = response.status;
+      return response.json();
     })
-    .then(function(data_bunch){
-      var object = data_bunch.object;
-      var project = data_bunch.project;
-      project.amount_contributors = object.length;
-
-      var owner;
-      for(var i = 0; i < object.length; i++){
-        var contributor = object[i];
-        if(contributor.acces_level === 40 || contributor.access_level === 50){
-          project.owner.name = contributor.username;
-          project.owner.url = contributor.web_url; // TODO: fraglich
-          project.owner.image = contributor.avatar_url;
-          break;
+    .then(function(jsonString){
+      if(statusCode < 299 && statusCode >= 200){
+        var object = jsonString;
+        console.log(object);
+        project.amount_contributors = object.length;
+        var owner = {};
+        console.log("Received items: " + object.length);
+        for(var i = 0; i < object.length; i++){
+          var contributor = object[i];
+          console.log(contributor.username + "|" + contributor.web_url + "|" + contributor.avatar_url);
+          if(contributor.access_level === 40 || contributor.access_level === 50){
+            project.owner.name = contributor.username;
+            project.owner.url = contributor.web_url; // TODO: fraglich
+            project.owner.image = contributor.avatar_url;
+            break;
+          }
         }
-      }
 
-      callback(project);
+        callback(id, project);
+      }else{
+        throw new Error("Request: " + jsonString.message);
+      }
     })
     .catch(function(error){
       console.log(error);
@@ -112,9 +105,9 @@ function GitLabAPIConnector(){
     project.source = "GitLab";
     project.last_updated = object.last_activity_at;
     project.owner = {};
-    project.owner.name = "test"//object.owner.login;
-    project.owner.url = "test"//object.owner.html_url;
-    project.owner.image = "test"//object.owner.avatar_url;
+    project.owner.name = object.namespace.name
+    project.owner.url = ""
+    project.owner.image = ""
     project.amount_contributors = 0;
     project.external_homepage = object.web_url;
     return project;
