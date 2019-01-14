@@ -1,5 +1,6 @@
 //Constructor and Class
 function GitHubAPIConnector(){
+  var statusCode = 200;
   //public function of object GitHubAPIConnector / each kind of connector do need this function!!!
   this.searchForProjects = function(search_string, amount_of_results, page, createdBeforeDate, callback){
     //Header: link - ...    auswerten für maximale Anzahl der Seiten
@@ -14,20 +15,21 @@ function GitHubAPIConnector(){
     var pullProjectResponse = [];
     fetch(url)
     .then(function(response){
-      if(response.ok){
-        console.log("Requested: " + url);
-        return response.json();
-      }else{
-        throw new Error("Search query could not be executed! The request limit may have been reached.");
-      }
+      console.log("Requested: " + url);
+      statusCode = response.status;
+      return response.json();
     })
     .then(function(jsonString){
-      var object = jsonString.items;
-      console.log("Received " + object.length + " items");
-      for(i = 0; i < object.length; i++){
-        pullProjectResponse.push(parseObjectToProjectData(object[i]));
+      if(statusCode < 299 && statusCode >= 200){
+        var object = jsonString.items;
+        console.log("Received " + object.length + " items");
+        for(i = 0; i < object.length; i++){
+          pullProjectResponse.push(parseObjectToProjectData(object[i]));
+        }
+        callback(pullProjectResponse);
+      }else{
+        throw new Error("Request: " + statusCode + " " + jsonString.message);
       }
-      callback(pullProjectResponse);
     }).
     catch(function(error){
       console.log(error);
@@ -41,21 +43,17 @@ function GitHubAPIConnector(){
     url = url.concat(query);
     fetch(url)
     .then(function(response){
-      if(response.ok){
-        console.log("Requested: " + url);
-        var data_bunch = {}
-        data_bunch.project = project;
-        data_bunch.object = response.json();
-        return data_bunch;
-      }else{
-        throw new Error("Request could not be executed! The request limit may have been reached.");
-      }
+      console.log("Requested: " + url);
+      statusCode = response.status;
+      return response.json();
     })
-    .then(function(data_bunch){
-      var object = data_bunch.object;
-      var project = data_bunch.project;
-      project.amount_contributors = object.length;
-      callback(id, project);
+    .then(function(object){
+      if(statusCode < 299 && statusCode >= 200){
+        project.amount_contributors = object.length;
+        callback(id, project);
+      }else{
+        throw new Error("Request: " + statusCode + " " + object.message);
+      }
     })
     .catch(function(error){
       console.log(error);
