@@ -12,7 +12,7 @@ var date;
 
 var createdDataCounter = 0; // is this used?
 
-function addElementToTable(general, description, source, last_updated){
+function addElementToTable(general, description, source, last_updated) {
   rowCounter++;
   var table = document.getElementById("resultTable").getElementsByTagName('tbody')[0];
   var newRow = table.insertRow(table.rows.length);
@@ -25,71 +25,102 @@ function addElementToTable(general, description, source, last_updated){
 
   var nameCell = newRow.insertCell(1);
   var projectName = document.createTextNode(general.name);
+  var projectLink = document.createElement('a');
   var projectUrl = document.createTextNode(general.url);
+  projectLink.setAttribute('href', general.url);
+  projectLink.appendChild(projectUrl);
   nameCell.appendChild(projectName);
   nameCell.appendChild(document.createElement("br"));
-  nameCell.appendChild(projectUrl);
+  nameCell.appendChild(projectLink);
 
   var descriptionCell = newRow.insertCell(2);
   var descriptionElement;
-  if(description == null){
+  if (description == null) {
     descriptionElement = document.createTextNode("-");
-  }else{
-	descriptionElement = document.createTextNode(description);
+  } else {
+    descriptionElement = document.createTextNode(description);
   }
   descriptionCell.appendChild(descriptionElement);
 
-  var sourceCell = newRow.insertCell(3);
+  var translateCell = newRow.insertCell(3);
+  var translateButton = document.createElement("BUTTON");
+  var translateElement = document.createTextNode("translate description");
+  translateButton.appendChild(translateElement);
+  document.body.appendChild(translateButton);
+  translateCell.appendChild(translateButton);
+  translateButton.addEventListener('click', translateButtonClicked, true);
+
+
+  var sourceCell = newRow.insertCell(4);
   var sourceElement = document.createTextNode(source);
   sourceCell.appendChild(sourceElement);
 
-  var updatedCell = newRow.insertCell(4);
+  var updatedCell = newRow.insertCell(5);
   var updatedElement = document.createTextNode(last_updated);
   updatedCell.appendChild(updatedElement);
 }
 
-function tableElementClicked(element){
+function translateButtonClicked(element) {
+  var id = element.target.parentElement.parentElement.id;
+  console.log(id);
+  var description = document.getElementById(id).getElementsByTagName("td")[2].innerHTML;
+  console.log(description);
+  translateAPI = new TextTranslator();
+  translateAPI.translateText(description, "de", id, translatedText);
+
+  element.stopPropagation();
+
+
+  return;
+}
+
+function translatedText(id, resultString) {
+  document.getElementById(id).getElementsByTagName("td")[2].innerHTML = resultString;
+}
+
+
+function tableElementClicked(element) {
   var id = element.target.parentElement.id;
-  var selectedProject = projects[id-1];
+  var selectedProject = projects[id - 1];
   var selectedRow = document.getElementById(id);
-  if(selectedRow.classList.contains("extended-tablecell")){
+  if (selectedRow.classList.contains("extended-tablecell")) {
     document.getElementById("extended-details").remove();
     selectedRow.classList.remove("extended-tablecell");
     return;
-  }else{
+  } else {
     closeExtendedDetails();
   }
   selectedRow.className = "extended-tablecell";
   var connector;
-  if(selectedProject.source == "GitHub"){
+  if (selectedProject.source == "GitHub") {
     connector = getSourceConnector("GitHub");
     connector.getProjectDetails(id, selectedProject, extendContent);
     //extendContent(id, selectedProject);
-  }else{
+  } else {
     extendContent(id, selectedProject);
   }
 }
 
-function closeExtendedDetails(){
+function closeExtendedDetails() {
   var extendedRow = document.getElementsByClassName("extended-tablecell");
-  if(extendedRow.length > 0){
+  if (extendedRow.length > 0) {
     document.getElementById("extended-details").remove();
     extendedRow[0].classList.remove("extended-tablecell");
   }
 }
 
-function getSourceConnector(source){
+function getSourceConnector(source) {
   var connector;
-  for(var i = 0; i < connectorAPIs.length; i++){
+  for (var i = 0; i < connectorAPIs.length; i++) {
     connector = connectorAPIs[i];
-    switch(source){
+    switch (source) {
       case "GitHub":
-        if( connector instanceof GitHubAPIConnector){
+        if (connector instanceof GitHubAPIConnector) {
           return connector;
         }
         break;
       case "GitLab":
-        if( connector instanceof GitLabAPIConnector){
+        if (connector instanceof GitLabAPIConnector) {
           return connector;
           break;
         }
@@ -97,8 +128,8 @@ function getSourceConnector(source){
   }
 }
 
-function extendContent(id, project){
-  if(id > elementsPerPage){
+function extendContent(id, project) {
+  if (id > elementsPerPage) {
     id = id % elementsPerPage;
   }
   var table = document.getElementById("resultTable").getElementsByTagName('tbody')[0];
@@ -117,7 +148,10 @@ function extendContent(id, project){
   var ownerName = document.createTextNode(project.owner.name);
   ownerName.className = "name";
 
+  var ownerLink = document.createElement('a');
   var ownerUrl = document.createTextNode(project.owner.url);
+  ownerLink.setAttribute('href', project.owner.url);
+  ownerLink.appendChild(ownerUrl);
   ownerUrl.className = "url";
 
   var ownerImage = document.createElement("img");
@@ -128,9 +162,9 @@ function extendContent(id, project){
   contributorsHeader.className = "contributorsheader";
 
   var contributorsElement;
-  if(typeof project.amount_contributors == "undefined"){
+  if (typeof project.amount_contributors == "undefined") {
     contributorsElement = document.createTextNode("0");
-  }else{
+  } else {
     contributorsElement = document.createTextNode(project.amount_contributors);
   }
   contributorsElement.className = "contributors";
@@ -139,71 +173,78 @@ function extendContent(id, project){
   homepageHeader.className = "homepageheader";
 
   var homepageElement;
-  if(project.external_homepage == null){
-    homepageElement = document.createTextNode("-");
-  }else{
+  var externalHomepage;
+  if (project.external_homepage == null) {
+    externalHomepage = document.createTextNode("-");
+  } else {
+    externalHomepage = document.createElement('a');
     homepageElement = document.createTextNode(project.external_homepage);
+    externalHomepage.setAttribute('href', project.external_homepage);
+    externalHomepage.appendChild(homepageElement);
+
   }
-  homepageElement.className = "homepage";
+  externalHomepage.className = "homepage";
 
   detailsContainer.appendChild(ownerHeader);
   detailsContainer.appendChild(ownerName);
-  detailsContainer.appendChild(ownerUrl);
+  detailsContainer.appendChild(ownerLink);
   detailsContainer.appendChild(ownerImage);
   detailsContainer.appendChild(contributorsHeader);
   detailsContainer.appendChild(contributorsElement);
   detailsContainer.appendChild(homepageHeader);
-  detailsContainer.appendChild(homepageElement);
+  detailsContainer.appendChild(externalHomepage);
   projectDetails.appendChild(detailsContainer);
 }
 
 //Will be accessed by connectors!
-function addProjectToTable(project){
+function addProjectToTable(project) {
   addElementToTable(project.general, project.description, project.source, project.last_updated);
-    //save porjects in ram for later proposals?
+  //save porjects in ram for later proposals?
 }
 
-function matchAndSortProjects(newProjects){
+function matchAndSortProjects(newProjects) {
   projects = projects.concat(newProjects);
-  projects.sort(function(a, b){ return a.last_updated < b.last_updated });
+  projects.sort(function(a, b) {
+    return a.last_updated < b.last_updated
+  });
   receivedProjects += newProjects.length;
-  if(connectorCallbacks == connectorAPIs.length){
-    while(newProjects.length > 0){
+  if (connectorCallbacks == connectorAPIs.length) {
+    while (newProjects.length > 0) {
       addProjectToTable(newProjects.shift());
     }
     console.log("Added " + receivedProjects + " items to main");
   }
 }
 
-function clearTable(){
+function clearTable() {
   document.getElementById("resultTable").getElementsByTagName('tbody')[0].innerHTML = "";
 }
 
-function processSearchString(searchString){
-  return searchString.replace(/[^\w\d]+/g," ").trim().toLowerCase().replace(/\s+/g,"+");
+function processSearchString(searchString) {
+  return searchString.replace(/[^\w\d]+/g, " ").trim().toLowerCase().replace(/\s+/g, "+");
 }
 
-function toggleResultTable(showTable){
+function toggleResultTable(showTable) {
   var table = document.getElementById("resultArea");
-  if(showTable){
-	  table.style.display = "block";
+  if (showTable) {
+    table.style.display = "block";
     checkPages();
     updateDisplayedPage()
-  }else{
-	  table.style.display = "none";
+  } else {
+    table.style.display = "none";
   }
 }
 
-function toggleSearchingIndicator(showIndicator){
+function toggleSearchingIndicator(showIndicator) {
   var searchingIndicator = document.getElementById("searchingIndicator");
-  if(showIndicator){
+  if (showIndicator) {
     searchingIndicator.style.display = "block";
-  }else{
+  } else {
     searchingIndicator.style.display = "none";
   }
 }
 
-function searchButtonClicked(){
+function searchButtonClicked() {
   sources = [];
   projects = [];
   connectorAPIs = [];
@@ -216,30 +257,30 @@ function searchButtonClicked(){
   rowCounter = 0;
 
   searchString = processSearchString(document.getElementById("input").value);
-  date = new Date(Date.now()).toISOString().replace(/[\..+Z]+/g,"+00:00");
+  date = new Date(Date.now()).toISOString().replace(/[\..+Z]+/g, "+00:00");
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   initiateSearch();
 }
 
-function initiateSearch(){
+function initiateSearch() {
   toggleResultTable(false);
   clearTable();
   connectorCallbacks = 0;
-  for(var i = 0; i < connectorAPIs.length; i++){
+  for (var i = 0; i < connectorAPIs.length; i++) {
     connectorAPIs[i].searchForProjects(searchString, elementsPerPage, currentPage, date, prepareTable);
   }
   toggleSearchingIndicator(true);
 }
 
-function getExistingProjects(startRow){
+function getExistingProjects(startRow) {
   toggleResultTable(false);
   toggleSearchingIndicator(true);
   clearTable();
   receivedProjects = 0;
-  for(var i = startRow; i < currentPage * elementsPerPage; i++){
-    if(typeof projects[i] == "undefined"){
+  for (var i = startRow; i < currentPage * elementsPerPage; i++) {
+    if (typeof projects[i] == "undefined") {
       break;
-    }else{
+    } else {
       receivedProjects++;
       addProjectToTable(projects[i]);
     }
@@ -249,79 +290,79 @@ function getExistingProjects(startRow){
   toggleResultTable(true);
 }
 
-function getConnectors(){
-  for(var i = 0; i < sources.length; i++){
+function getConnectors() {
+  for (var i = 0; i < sources.length; i++) {
     connectorAPIs.push(getConnector(sources[i]));
   }
 }
 
-function prepareTable(projects){
+function prepareTable(projects) {
   connectorCallbacks++;
   matchAndSortProjects(projects);
-  if(connectorCallbacks == connectorAPIs.length){
+  if (connectorCallbacks == connectorAPIs.length) {
     toggleSearchingIndicator(false);
     toggleResultTable(true);
   }
 }
 
-function getSources(){
+function getSources() {
   var checkboxes = document.getElementsByName('source');
-  for (var i = 0; i < checkboxes.length; i++){
-    if (checkboxes[i].checked){
+  for (var i = 0; i < checkboxes.length; i++) {
+    if (checkboxes[i].checked) {
       sources.push(checkboxes[i].id);
     }
   }
 }
 
-function checkPages(){
+function checkPages() {
   var previousButtons = document.getElementsByClassName("previous-page");
   var nextButtons = document.getElementsByClassName("next-page");
-  if(currentPage == 1){
-    for(var i = 0; i < previousButtons.length; i++){
+  if (currentPage == 1) {
+    for (var i = 0; i < previousButtons.length; i++) {
       previousButtons[i].className = "page-button-disabled previous-page";
     }
-  }else{
-    for(var i = 0; i < previousButtons.length; i++){
+  } else {
+    for (var i = 0; i < previousButtons.length; i++) {
       previousButtons[i].className = "page-button previous-page";
     }
   }
-  if(receivedProjects < elementsPerPage){
-    for(var i = 0; i < nextButtons.length; i++){
+  if (receivedProjects < elementsPerPage) {
+    for (var i = 0; i < nextButtons.length; i++) {
       nextButtons[i].className = "page-button-disabled next-page";
     }
-  }else{
-    for(var i = 0; i < nextButtons.length; i++){
+  } else {
+    for (var i = 0; i < nextButtons.length; i++) {
       nextButtons[i].className = "page-button next-page";
     }
   }
 }
 
-function getNextPage(){
+function getNextPage() {
   closeExtendedDetails();
-  if(document.getElementsByClassName("next-page")[0].classList.contains("page-button-disabled")){
+  if (document.getElementsByClassName("next-page")[0].classList.contains("page-button-disabled")) {
     return;
   }
   currentPage++;
-  if((currentPage * elementsPerPage) > projects.length){
+  if ((currentPage * elementsPerPage) > projects.length) {
     initiateSearch();
-  }else{
+  } else {
     getExistingProjects(rowCounter);
   }
 }
 
-function getPreviousPage(){
+function getPreviousPage() {
   closeExtendedDetails();
-  if(document.getElementsByClassName("previous-page")[0].classList.contains("page-button-disabled")){
+  if (document.getElementsByClassName("previous-page")[0].classList.contains("page-button-disabled")) {
     return;
   }
   currentPage--;
-  rowCounter = (currentPage-1)*elementsPerPage;
+  rowCounter = (currentPage - 1) * elementsPerPage;
   getExistingProjects(rowCounter);
 }
 
-function updateDisplayedPage(){
+function updateDisplayedPage() {
   var pageLabels = document.getElementsByClassName("displayed-page");
-  for(var i = 0; i < pageLabels.length; i++){
+  for (var i = 0; i < pageLabels.length; i++) {
     pageLabels[i].innerHTML = currentPage;
   }
 }
