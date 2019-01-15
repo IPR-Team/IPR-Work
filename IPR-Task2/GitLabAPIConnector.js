@@ -7,7 +7,7 @@ function GitLabAPIConnector(){
   var statusCode = 200;
   //public function of object GitHubAPIConnector / each kind of connector do need this function!!!
   this.searchForProjects = function(search_string, amount_of_results, page, createdBeforeDate, callback){
-    
+
     // It seems like the date cant be included in the search API
     var url = "https://gitlab.com/api/v4/search";
     var query = "&search=".concat(search_string);
@@ -32,12 +32,11 @@ function GitLabAPIConnector(){
         }
         callback(pullProjectResponse);
       }else{
-        throw new Error("Request: " + jsonString.message);
+        window.alert("There was an error loading the data. Possibly the request limit has been reached.");
+        console.log("Error during request: " + jsonString.message)
+        callback(null);
       }
     })
-    .catch(function(error){
-      console.log(error);
-    });
   }
 
   this.getProjectDetails = function (id, project, callback) {
@@ -73,12 +72,11 @@ function GitLabAPIConnector(){
 
         callback(id, project);
       }else{
-        throw new Error("Request: " + jsonString.message);
+        window.alert("There was an error loading the data. Possibly the request limit has been reached.");
+        console.log("Error during request: " + jsonString.message)
+        callback(id, project);
       }
     })
-    .catch(function(error){
-      console.log(error);
-    });
   }
 
   //private function: Shortened description by triming full string

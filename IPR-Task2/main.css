@@ -237,10 +237,41 @@ tr:hover {
 	background-color: rgba(17,25,34,0.8);
 }
 
+a:link{
+	color:white;
+}
+
+.translate-text{
+	font-family: 'Nunito', sans-serif;
+	color: white;
+}
+.translate-button{
+	display: flex;
+	margin: 0;
+	justify-content: center;
+	align-items: center;
+	background: rgba(255,255,255, 0.1);
+	border: 1px solid;
+	border-color: #111922;
+	color: white;
+	cursor: pointer;
+	height: 40px;
+	width: 120px;
+
+	-webkit-transition-duration: 0.2s; /* Safari */
+	transition-duration: 0.2s;
+}
+
+.translate-button:hover{
+	background: rgba(255,255,255, 0.8);
+	color:black;
+}
+
 .extended-tablecell{
 	/* this is just an identifier */
 	border-bottom: 0px;
 }
+
 
 .details-container {
 	display: grid;

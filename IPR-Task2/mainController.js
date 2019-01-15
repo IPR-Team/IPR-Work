@@ -8,6 +8,7 @@ var connectorAPIs = [];
 var projects = [];
 var sources = [];
 var searchString = "";
+isLoading = 0;
 var date;
 
 var createdDataCounter = 0; // is this used?
@@ -43,8 +44,10 @@ function addElementToTable(general, description, source, last_updated) {
   descriptionCell.appendChild(descriptionElement);
 
   var translateCell = newRow.insertCell(3);
-  var translateButton = document.createElement("BUTTON");
-  var translateElement = document.createTextNode("translate description");
+  var translateButton = document.createElement("button");
+  translateButton.className = "translate-button";
+  var translateElement = document.createTextNode("Translate description");
+  translateElement.className = "translate-text";
   translateButton.appendChild(translateElement);
   document.body.appendChild(translateButton);
   translateCell.appendChild(translateButton);
@@ -67,35 +70,49 @@ function translateButtonClicked(element) {
   console.log(description);
   translateAPI = new TextTranslator();
   translateAPI.translateText(description, "de", id, translatedText);
-
   element.stopPropagation();
-
-
   return;
 }
 
 function translatedText(id, resultString) {
+  if(resultString == null){
+    return;
+  }
   document.getElementById(id).getElementsByTagName("td")[2].innerHTML = resultString;
 }
 
-
 function tableElementClicked(element) {
+  if(isLoading == 1){
+    window.alert("Another request is still in progress...");
+    return;
+  }else{
+    isLoading = 1;
+  }
   var id = element.target.parentElement.id;
+  console.log(id);
   var selectedProject = projects[id - 1];
   var selectedRow = document.getElementById(id);
-  if (selectedRow.classList.contains("extended-tablecell")) {
-    document.getElementById("extended-details").remove();
-    selectedRow.classList.remove("extended-tablecell");
-    return;
-  } else {
-    closeExtendedDetails();
+  if(document.getElementsByClassName("extended-tablecell").length > 0){
+    if (selectedRow.classList.contains("extended-tablecell")) {
+      document.getElementById("extended-details").remove();
+      selectedRow.classList.remove("extended-tablecell");
+      isLoading = 0;
+      return;
+    } else {
+      closeExtendedDetails();
+    }
   }
   selectedRow.className = "extended-tablecell";
   var connector;
   if (selectedProject.source == "GitHub") {
     connector = getSourceConnector("GitHub");
-    connector.getProjectDetails(id, selectedProject, extendContent);
-    //extendContent(id, selectedProject);
+    try{
+      connector.getProjectDetails(id, selectedProject, extendContent);
+    }catch(e){
+      if ( e instanceof SyntaxError){
+        selectedProject.amount_contributors = 0;
+      }
+    }
   } else {
     extendContent(id, selectedProject);
   }
@@ -103,10 +120,11 @@ function tableElementClicked(element) {
 
 function closeExtendedDetails() {
   var extendedRow = document.getElementsByClassName("extended-tablecell");
-  if (extendedRow.length > 0) {
-    document.getElementById("extended-details").remove();
-    extendedRow[0].classList.remove("extended-tablecell");
+  var details = document.getElementById("extended-details");
+  if(details != null){
+    details.remove();
   }
+  extendedRow[0].classList.remove("extended-tablecell");
 }
 
 function getSourceConnector(source) {
@@ -129,8 +147,12 @@ function getSourceConnector(source) {
 }
 
 function extendContent(id, project) {
-  if (id > elementsPerPage) {
+
+  if (id >= elementsPerPage) {
     id = id % elementsPerPage;
+    if(id == 0){
+      id = 50;
+    }
   }
   var table = document.getElementById("resultTable").getElementsByTagName('tbody')[0];
   var newRow = table.insertRow(id);
@@ -194,25 +216,23 @@ function extendContent(id, project) {
   detailsContainer.appendChild(homepageHeader);
   detailsContainer.appendChild(externalHomepage);
   projectDetails.appendChild(detailsContainer);
+  isLoading = 0;
 }
-
 //Will be accessed by connectors!
 function addProjectToTable(project) {
   addElementToTable(project.general, project.description, project.source, project.last_updated);
   //save porjects in ram for later proposals?
 }
 
-function matchAndSortProjects(newProjects) {
-  projects = projects.concat(newProjects);
-  projects.sort(function(a, b) {
+function sortProjects(newProjects) {
+  newProjects.sort(function(a, b) {
     return a.last_updated < b.last_updated
   });
+  projects = projects.concat(newProjects);
   receivedProjects += newProjects.length;
   if (connectorCallbacks == connectorAPIs.length) {
-    while (newProjects.length > 0) {
-      addProjectToTable(newProjects.shift());
-    }
     console.log("Added " + receivedProjects + " items to main");
+    getExistingProjects(rowCounter);
   }
 }
 
@@ -245,6 +265,10 @@ function toggleSearchingIndicator(showIndicator) {
 }
 
 function searchButtonClicked() {
+  searchString = processSearchString(document.getElementById("input").value);
+  if(searchString == ""){
+    return;
+  }
   sources = [];
   projects = [];
   connectorAPIs = [];
@@ -255,8 +279,6 @@ function searchButtonClicked() {
   maxPage = 1;
   receivedProjects = 0;
   rowCounter = 0;
-
-  searchString = processSearchString(document.getElementById("input").value);
   date = new Date(Date.now()).toISOString().replace(/[\..+Z]+/g, "+00:00");
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   initiateSearch();
@@ -297,8 +319,11 @@ function getConnectors() {
 }
 
 function prepareTable(projects) {
+  if(projects == null || projects.length == 0){
+    return;
+  }
   connectorCallbacks++;
-  matchAndSortProjects(projects);
+  sortProjects(projects);
   if (connectorCallbacks == connectorAPIs.length) {
     toggleSearchingIndicator(false);
     toggleResultTable(true);
@@ -338,7 +363,9 @@ function checkPages() {
 }
 
 function getNextPage() {
-  closeExtendedDetails();
+  if(document.getElementsByClassName("extended-tablecell").length > 0){
+    closeExtendedDetails();
+  }
   if (document.getElementsByClassName("next-page")[0].classList.contains("page-button-disabled")) {
     return;
   }
@@ -351,7 +378,9 @@ function getNextPage() {
 }
 
 function getPreviousPage() {
-  closeExtendedDetails();
+  if(document.getElementsByClassName("extended-tablecell").length > 0){
+    closeExtendedDetails();
+  }
   if (document.getElementsByClassName("previous-page")[0].classList.contains("page-button-disabled")) {
     return;
   }

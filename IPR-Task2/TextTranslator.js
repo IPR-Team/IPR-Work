@@ -18,7 +18,9 @@ function TextTranslator() {
         if (response.ok) {
           return response.json();
         } else {
-          throw new Error("Translation query could not be executed! Maybe url string contains to many signs.");
+          window.alert("Translation query could not be executed! Maybe your url string contains to many symbols.");
+          console.log("Error during request: " + jsonString.message)
+          callback(id, null);
         }
       })
       .then(function(jsonString) {
@@ -30,7 +32,9 @@ function TextTranslator() {
         callback(id, contentParts);
       })
       .catch(function(error) {
-        console.log(error);
+        window.alert("Unknown error during request!");
+        console.log("Error: " + jsonString.message)
+        callback(id, null);
       });
   }
 

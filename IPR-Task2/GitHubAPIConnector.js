@@ -28,12 +28,11 @@ function GitHubAPIConnector() {
           }
           callback(pullProjectResponse);
         } else {
-          throw new Error("Request: " + statusCode + " " + jsonString.message);
+          window.alert("There was an error loading the data. Possibly the request limit has been reached.");
+          console.log("Error during request: " + jsonString.message)
+          callback(null);
         }
-      }).
-    catch(function(error) {
-      console.log(error);
-    });
+      })
   }
 
   //use this function to get complete data set of a project
@@ -52,12 +51,12 @@ function GitHubAPIConnector() {
           project.amount_contributors = object.length;
           callback(id, project);
         } else {
-          throw new Error("Request: " + statusCode + " " + object.message);
+          window.alert("There was an error loading the data. Possibly the request limit has been reached.");
+          console.log("Error during request: " + statusCode + " " + object.message);
+          project.amount_contributors = 0;
+          callback(id, project);
         }
       })
-      .catch(function(error) {
-        console.log(error);
-      });
   }
   //private function: Shortened description by triming full string
   var processDescription = function(description) {
