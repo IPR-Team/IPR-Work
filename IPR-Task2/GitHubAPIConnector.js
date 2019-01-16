@@ -1,13 +1,14 @@
 //Constructor and Class
-function GitHubAPIConnector() {
+function GitHubAPIConnector(token) {
   var statusCode = 200;
+  var privatToken = token;
   //public function of object GitHubAPIConnector / each kind of connector do need this function!!!
   this.searchForProjects = function(search_string, amount_of_results, page, createdBeforeDate, callback) {
     //Header: link - ...    auswerten für maximale Anzahl der Seiten
     var url = "https://api.github.com/search/repositories";
     var query = "?q=".concat(search_string);
     var created = "&created%3A<".concat(createdBeforeDate);
-    var accessToken = "&?access_token=ca3e81dec2b846edb9d005e3a2727e131aae15fb";
+    var accessToken = "&?access_token=" + privatToken; //ca3e81dec2b846edb9d005e3a2727e131aae15fb
     var maxResults = "&per_page=" + amount_of_results;
     var page = "&page=" + page;
     var sort = "&sort=updated";

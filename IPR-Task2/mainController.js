@@ -5,6 +5,7 @@ var elementsPerPage = 50;
 var receivedProjects = 0;
 var connectorCallbacks = 0;
 var connectorAPIs = [];
+var connectorManager = {};
 var projects = [];
 var sources = [];
 var searchString = "";
@@ -68,7 +69,7 @@ function translateButtonClicked(element) {
   console.log(id);
   var description = document.getElementById(id).getElementsByTagName("td")[2].innerHTML;
   console.log(description);
-  translateAPI = new TextTranslator();
+  translateAPI = new TextTranslator("trnsl.1.1.20190113T111827Z.f1625132c6454630.d83702b62ef89556bccf67d9c4df672d2b4a7275");
   translateAPI.translateText(description, "de", id, translatedText);
   element.stopPropagation();
   return;
@@ -272,6 +273,7 @@ function searchButtonClicked() {
   sources = [];
   projects = [];
   connectorAPIs = [];
+  connectorManager = new ConnectorManager("ca3e81dec2b846edb9d005e3a2727e131aae15fb", "zsPXGhyv5Rn4ss9W7f2u");
 
   getSources();
   getConnectors();
@@ -314,7 +316,7 @@ function getExistingProjects(startRow) {
 
 function getConnectors() {
   for (var i = 0; i < sources.length; i++) {
-    connectorAPIs.push(getConnector(sources[i]));
+    connectorAPIs.push(connectorManager.getConnector(sources[i]));
   }
 }
 

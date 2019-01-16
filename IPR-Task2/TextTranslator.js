@@ -1,9 +1,10 @@
-function TextTranslator() {
+function TextTranslator(token) {
+  var privateToken = token;
   var encoder = new TextEncoder();
   //text = array, targetLanguageKey: f.e. ru, de, en
   this.translateText = function(text, targetLanguageKey, id, callback) {
     var url = "https://translate.yandex.net/api/v1.5/tr.json/translate";
-    var key = "?key=trnsl.1.1.20190113T111827Z.f1625132c6454630.d83702b62ef89556bccf67d9c4df672d2b4a7275"
+    var key = "?key=" + privateToken; //trnsl.1.1.20190113T111827Z.f1625132c6454630.d83702b62ef89556bccf67d9c4df672d2b4a7275
     var content = "";
     var content = "&text=";
     var lang = "&lang=".concat(targetLanguageKey)

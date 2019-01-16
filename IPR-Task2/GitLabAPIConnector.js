@@ -2,7 +2,8 @@
 //Contributors: https://docs.gitlab.com/ce/api/members.html / /projects/:id/members
 //Projects: https://docs.gitlab.com/ce/api/search.html
 
-function GitLabAPIConnector(){
+function GitLabAPIConnector(token){
+  var privateToken = token;
   var encoder = new TextEncoder();
   var statusCode = 200;
   //public function of object GitHubAPIConnector / each kind of connector do need this function!!!
@@ -12,7 +13,7 @@ function GitLabAPIConnector(){
     var url = "https://gitlab.com/api/v4/search";
     var query = "&search=".concat(search_string);
     var scope = "?scope=projects"
-    var accessToken = "&private_token=zsPXGhyv5Rn4ss9W7f2u"; //-> CONFIG!
+    var accessToken = "&private_token=" + privateToken; //zsPXGhyv5Rn4ss9W7f2u
     var maxResults = "&per_page=" + amount_of_results;
     var page = "&page=" + page;
     var url = url.concat(scope, query, accessToken, maxResults, page);
