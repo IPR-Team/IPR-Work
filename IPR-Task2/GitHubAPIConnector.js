@@ -48,7 +48,10 @@ function GitHubAPIConnector(token) {
         return response.json();
       })
       .then(function(object) {
-        if (statusCode < 299 && statusCode >= 200) {
+        if(statusCode == 202){
+          var timeout_counter = 0;
+          renew_request(url, timeout_counter, id, project, callback)
+        } else if (statusCode < 299 && statusCode >= 200) {
           project.amount_contributors = object.length;
           callback(id, project);
         } else {
@@ -59,6 +62,35 @@ function GitHubAPIConnector(token) {
         }
       })
   }
+
+  var renew_request = function(url, timeout_counter, id, project, callback){
+    if(timeout_counter > 5){
+      window.alert("Time out on updateting project info");
+      callback(id, project)
+    }else{
+      fetch(url)
+        .then(function(response) {
+          console.log("Requested again: " + url);
+          statusCode = response.status;
+          return response.json();
+        })
+        .then(function(object) {
+          if(statusCode == 202){
+            timeout_counter = timeout_counter + 1;
+            renew_request(url, timeout_counter, id, project, callback)
+          } else if (statusCode < 299 && statusCode >= 200) {
+            project.amount_contributors = object.length;
+            callback(id, project);
+          } else {
+            window.alert("There was an error loading the data. Possibly the request limit has been reached.");
+            console.log("Error during request: " + statusCode + " " + object.message);
+            project.amount_contributors = 0;
+            callback(id, project);
+          }
+        })
+    }
+  }
+
   //private function: Shortened description by triming full string
   var processDescription = function(description) {
     if (description != null) {

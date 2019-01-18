@@ -105,8 +105,12 @@ function tableElementClicked(element) {
   }
   selectedRow.className = "extended-tablecell";
   var connector;
-  if (selectedProject.source == "GitHub") {
-    connector = getSourceConnector("GitHub");
+  if (selectedProject.source == "GitHub" || selectedProject.source == "GitLab") {
+    if(selectedProject.source == "GitHub"){
+      connector = getSourceConnector("GitHub");
+    } else {
+      connector = getSourceConnector("GitLab");
+    }
     try{
       connector.getProjectDetails(id, selectedProject, extendContent);
     }catch(e){

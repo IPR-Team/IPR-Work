@@ -24,7 +24,6 @@ function GitLabAPIConnector(token){
       return response.json();
     })
     .then(function(jsonString){
-      console.log(jsonString);
       if(statusCode < 299 && statusCode >= 200){
         var object = jsonString;
         console.log("Received " + object.length + " items");
@@ -44,7 +43,6 @@ function GitLabAPIConnector(token){
     var url = "https://gitlab.com/api/v4"
     var accessToken = "?private_token=zsPXGhyv5Rn4ss9W7f2u";
     var specificPath = encoder.EncodeUrl(project.owner.name.concat("/", project.general.name.replace(/[\s]/g, "-")));
-    console.log("Specific path: " + specificPath);
     var query = "/projects/".concat(specificPath, "/members");
     url = url.concat(query, accessToken);
     fetch(url)
@@ -56,7 +54,6 @@ function GitLabAPIConnector(token){
     .then(function(jsonString){
       if(statusCode < 299 && statusCode >= 200){
         var object = jsonString;
-        console.log(object);
         project.amount_contributors = object.length;
         var owner = {};
         console.log("Received items: " + object.length);
@@ -70,8 +67,7 @@ function GitLabAPIConnector(token){
             break;
           }
         }
-
-        callback(id, project);
+          callback(id, project);
       }else{
         window.alert("There was an error loading the data. Possibly the request limit has been reached.");
         console.log("Error during request: " + jsonString.message)
