@@ -1,4 +1,14 @@
+<<<<<<< HEAD
 var rowCounter = 0; // used to correctly insert new rows into the table
+=======
+/**
+  mainController handles
+  @author H.Tanke, B. Petschelt, P. Mitzlaff
+  @version 1.0
+*/
+
+var rowCounter = 0;
+>>>>>>> 0f2e71e85f9e313a362890ec735ab3918022b20e
 var currentPage = 1;
 var elementsPerPage = 50; //amount of displayed elements per page
 var receivedProjects = 0; //used to determine, when all projects are correctly received
@@ -30,6 +40,7 @@ function addElementToTable(general, description, source, last_updated) {
   var projectName = document.createTextNode(general.name);
   var projectLink = document.createElement('a');
   var projectUrl = document.createTextNode(general.url);
+  //create clickable link for project url
   projectLink.setAttribute('href', general.url);
   projectLink.appendChild(projectUrl);
   nameCell.appendChild(projectName);
@@ -65,6 +76,9 @@ function addElementToTable(general, description, source, last_updated) {
   updatedCell.appendChild(updatedElement);
 }
 
+/**
+function that translates the descriptions of all table elements that are displayed on the website
+*/
 function translateAllButtonClicked() {
   var translateAllId = ((currentPage - 1) * elementsPerPage) + 1;
   var languages = document.getElementById("LanguageSelection");
@@ -85,6 +99,10 @@ function translateAllButtonClicked() {
   }
 }
 
+/**
+function that translates the description of the table element whose button was clicked
+@param element table element on whose button was clicked
+*/
 function translateButtonClicked(element) {
   var languages = document.getElementById("LanguageSelection");
   var languageCode = languages.options[languages.selectedIndex].value;
@@ -101,6 +119,11 @@ function translateButtonClicked(element) {
   return;
 }
 
+/**
+function that returns the translated result string
+@param id the id of the specific table element
+@param resultString the translated result string
+*/
 function translatedText(id, resultString) {
   if (resultString == null) {
     return;
@@ -248,6 +271,7 @@ function extendContent(id, project) {
   var lineBreak = document.createElement("br");
   var ownerUrl = document.createElement("div");
   ownerUrl.innerHTML = project.owner.url;
+  //create clickable link for project owner url
   ownerLink.setAttribute('href', project.owner.url);
   ownerLink.appendChild(ownerUrl);
   ownerLink.className = "owner-url";
@@ -286,6 +310,7 @@ function extendContent(id, project) {
     externalHomepage = document.createElement('a');
     homepageElement = document.createElement("div");
     homepageElement.innerHTML = project.external_homepage;
+    //create clickable link for project homepage
     externalHomepage.setAttribute('href', project.external_homepage);
     externalHomepage.appendChild(homepageElement);
   }
