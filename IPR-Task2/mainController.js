@@ -9,6 +9,10 @@ var connectorManager = {};
 var projects = [];
 var sources = [];
 var searchString = "";
+var token_config = {}
+token_config['GitHub'] = null; //"ca3e81dec2b846edb9d005e3a2727e131aae15fb"
+token_config['GitLab'] = null; //"zsPXGhyv5Rn4ss9W7f2u"
+token_config['Yandex'] = null; //"trnsl.1.1.20190113T111827Z.f1625132c6454630.d83702b62ef89556bccf67d9c4df672d2b4a7275"
 isLoading = 0;
 var date;
 
@@ -69,7 +73,7 @@ function translateButtonClicked(element) {
   console.log(id);
   var description = document.getElementById(id).getElementsByTagName("td")[2].innerHTML;
   console.log(description);
-  translateAPI = new TextTranslator("trnsl.1.1.20190113T111827Z.f1625132c6454630.d83702b62ef89556bccf67d9c4df672d2b4a7275");
+  translateAPI = new TextTranslator(token_config['Yandex']);
   translateAPI.translateText(description, "de", id, translatedText);
   element.stopPropagation();
   return;
@@ -80,6 +84,27 @@ function translatedText(id, resultString) {
     return;
   }
   document.getElementById(id).getElementsByTagName("td")[2].innerHTML = resultString;
+}
+
+function processConfiguration(){
+  var dict = new Object();
+  dict['ghTokenInput'] = 40;
+  dict['glTokenInput'] = 20;
+  dict['ydTokenInput'] = 84;
+  for(var key in dict){
+      var value = document.getElementById(key).value;
+      if(key == 'ghTokenInput'){
+        token_config['GitHub'] = value;
+      }else if(key == 'glTokenInput'){
+        token_config['GitLab'] = value;
+      }else if(key == 'ydTokenInput'){
+        token_config['Yandex'] = value;
+      }
+      if(value.length < dict[key]){
+        return false;
+      }
+  }
+  return true;
 }
 
 function tableElementClicked(element) {
@@ -270,6 +295,10 @@ function toggleSearchingIndicator(showIndicator) {
 }
 
 function searchButtonClicked() {
+  if(!processConfiguration()){
+    window.alert("Error on configuration. Be sure to add valid access tokens to configuration first to perform a search.");
+    return
+  }
   searchString = processSearchString(document.getElementById("input").value);
   if(searchString == ""){
     return;
@@ -277,7 +306,7 @@ function searchButtonClicked() {
   sources = [];
   projects = [];
   connectorAPIs = [];
-  connectorManager = new ConnectorManager("ca3e81dec2b846edb9d005e3a2727e131aae15fb", "zsPXGhyv5Rn4ss9W7f2u");
+  connectorManager = new ConnectorManager(token_config['GitHub'], token_config['GitLab']);
 
   getSources();
   getConnectors();

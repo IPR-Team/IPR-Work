@@ -1,6 +1,5 @@
 function TextEncoder(){
   this.EncodeUrl = function (text) {
-    console.log("Text for encoding: " + text);
     var match = text.search(/[\s\:/\?#\[\]\@\!\$\&'\(\)\*\,;=]/);
     while(match >= 0){
       var newSign = getUrlEncodedSign(text.charAt(match));
