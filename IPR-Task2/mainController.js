@@ -69,56 +69,63 @@ function addElementToTable(general, description, source, last_updated) {
 }
 
 function translateButtonClicked(element) {
+  var languages = document.getElementById("LanguageSelection");
+  var languageCode = languages.options[languages.selectedIndex].value;
   var id = element.target.parentElement.parentElement.id;
   console.log(id);
   var description = document.getElementById(id).getElementsByTagName("td")[2].innerHTML;
   console.log(description);
   translateAPI = new TextTranslator(token_config['Yandex']);
-  translateAPI.translateText(description, "de", id, translatedText);
-  element.stopPropagation();
+  if (languageCode === "") {
+    window.alert("First select language to translate.");
+    element.stopPropagation();
+  } else {
+    translateAPI.translateText(description, languageCode, id, translatedText);
+    element.stopPropagation();
+  }
   return;
 }
 
 function translatedText(id, resultString) {
-  if(resultString == null){
+  if (resultString == null) {
     return;
   }
   document.getElementById(id).getElementsByTagName("td")[2].innerHTML = resultString;
 }
 
-function processConfiguration(){
+function processConfiguration() {
   var dict = new Object();
   dict['ghTokenInput'] = 40;
   dict['glTokenInput'] = 20;
   dict['ydTokenInput'] = 84;
-  for(var key in dict){
-      var value = document.getElementById(key).value;
-      if(key == 'ghTokenInput'){
-        token_config['GitHub'] = value;
-      }else if(key == 'glTokenInput'){
-        token_config['GitLab'] = value;
-      }else if(key == 'ydTokenInput'){
-        token_config['Yandex'] = value;
-      }
-      if(value.length < dict[key]){
-        return false;
-      }
+  for (var key in dict) {
+    var value = document.getElementById(key).value;
+    if (key == 'ghTokenInput') {
+      token_config['GitHub'] = value;
+    } else if (key == 'glTokenInput') {
+      token_config['GitLab'] = value;
+    } else if (key == 'ydTokenInput') {
+      token_config['Yandex'] = value;
+    }
+    if (value.length < dict[key]) {
+      return false;
+    }
   }
   return true;
 }
 
 function tableElementClicked(element) {
-  if(isLoading == 1){
+  if (isLoading == 1) {
     window.alert("Another request is still in progress...");
     return;
-  }else{
+  } else {
     isLoading = 1;
   }
   var id = element.target.parentElement.id;
   console.log(id);
   var selectedProject = projects[id - 1];
   var selectedRow = document.getElementById(id);
-  if(document.getElementsByClassName("extended-tablecell").length > 0){
+  if (document.getElementsByClassName("extended-tablecell").length > 0) {
     if (selectedRow.classList.contains("extended-tablecell")) {
       document.getElementById("extended-details").remove();
       selectedRow.classList.remove("extended-tablecell");
@@ -131,15 +138,15 @@ function tableElementClicked(element) {
   selectedRow.className = "extended-tablecell";
   var connector;
   if (selectedProject.source == "GitHub" || selectedProject.source == "GitLab") {
-    if(selectedProject.source == "GitHub"){
+    if (selectedProject.source == "GitHub") {
       connector = getSourceConnector("GitHub");
     } else {
       connector = getSourceConnector("GitLab");
     }
-    try{
+    try {
       connector.getProjectDetails(id, selectedProject, extendContent);
-    }catch(e){
-      if ( e instanceof SyntaxError){
+    } catch (e) {
+      if (e instanceof SyntaxError) {
         selectedProject.amount_contributors = 0;
       }
     }
@@ -151,7 +158,7 @@ function tableElementClicked(element) {
 function closeExtendedDetails() {
   var extendedRow = document.getElementsByClassName("extended-tablecell");
   var details = document.getElementById("extended-details");
-  if(details != null){
+  if (details != null) {
     details.remove();
   }
   extendedRow[0].classList.remove("extended-tablecell");
@@ -180,7 +187,7 @@ function extendContent(id, project) {
   //
   if (id >= elementsPerPage) {
     id = id % elementsPerPage;
-    if(id == 0){
+    if (id == 0) {
       id = elementsPerPage;
     }
   }
@@ -305,12 +312,12 @@ function toggleSearchingIndicator(showIndicator) {
 }
 
 function searchButtonClicked() {
-  if(!processConfiguration()){
+  if (!processConfiguration()) {
     window.alert("Error on configuration. Be sure to add valid access tokens to configuration first to perform a search.");
     return
   }
   searchString = processSearchString(document.getElementById("input").value);
-  if(searchString == ""){
+  if (searchString == "") {
     return;
   }
   sources = [];
@@ -364,7 +371,7 @@ function getConnectors() {
 }
 
 function prepareTable(projects) {
-  if(projects == null || projects.length == 0){
+  if (projects == null || projects.length == 0) {
     return;
   }
   connectorCallbacks++;
@@ -408,7 +415,7 @@ function checkPages() {
 }
 
 function getNextPage() {
-  if(document.getElementsByClassName("extended-tablecell").length > 0){
+  if (document.getElementsByClassName("extended-tablecell").length > 0) {
     closeExtendedDetails();
   }
   if (document.getElementsByClassName("next-page")[0].classList.contains("page-button-disabled")) {
@@ -423,7 +430,7 @@ function getNextPage() {
 }
 
 function getPreviousPage() {
-  if(document.getElementsByClassName("extended-tablecell").length > 0){
+  if (document.getElementsByClassName("extended-tablecell").length > 0) {
     closeExtendedDetails();
   }
   if (document.getElementsByClassName("previous-page")[0].classList.contains("page-button-disabled")) {

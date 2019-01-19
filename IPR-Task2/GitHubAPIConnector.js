@@ -39,8 +39,9 @@ function GitHubAPIConnector(token) {
   //use this function to get complete data set of a project
   this.getProjectDetails = function(id, project, callback) {
     var url = "https://api.github.com"
+    var accessToken = "?access_token=" + privatToken;
     var query = "/repos/".concat(project.owner.name, "/", project.general.name, "/stats/contributors")
-    url = url.concat(query);
+    url = url.concat(query, accessToken);
     fetch(url)
       .then(function(response) {
         console.log("Requested: " + url);
@@ -48,7 +49,7 @@ function GitHubAPIConnector(token) {
         return response.json();
       })
       .then(function(object) {
-        if(statusCode == 202){
+        if (statusCode == 202) {
           var timeout_counter = 0;
           renew_request(url, timeout_counter, id, project, callback)
         } else if (statusCode < 299 && statusCode >= 200) {
@@ -63,11 +64,11 @@ function GitHubAPIConnector(token) {
       })
   }
 
-  var renew_request = function(url, timeout_counter, id, project, callback){
-    if(timeout_counter > 5){
+  var renew_request = function(url, timeout_counter, id, project, callback) {
+    if (timeout_counter > 5) {
       window.alert("Time out on updateting project info");
       callback(id, project)
-    }else{
+    } else {
       fetch(url)
         .then(function(response) {
           console.log("Requested again: " + url);
@@ -75,7 +76,7 @@ function GitHubAPIConnector(token) {
           return response.json();
         })
         .then(function(object) {
-          if(statusCode == 202){
+          if (statusCode == 202) {
             timeout_counter = timeout_counter + 1;
             renew_request(url, timeout_counter, id, project, callback)
           } else if (statusCode < 299 && statusCode >= 200) {
