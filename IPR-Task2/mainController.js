@@ -152,74 +152,84 @@ function getSourceConnector(source) {
 }
 
 function extendContent(id, project) {
-
+  //
   if (id >= elementsPerPage) {
     id = id % elementsPerPage;
     if(id == 0){
-      id = 50;
+      id = elementsPerPage;
     }
   }
   var table = document.getElementById("resultTable").getElementsByTagName('tbody')[0];
   var newRow = table.insertRow(id);
   newRow.setAttribute("id", "extended-details");
-
   var projectDetails = newRow.insertCell(0);
   projectDetails.colSpan = "8";
-
-  var detailsContainer = document.createElement('div');
+  var detailsContainer = document.createElement("div");
   detailsContainer.className = "details-container";
 
-  var ownerHeader = document.createTextNode("Project owner:");
-  ownerHeader.className = "picheader";
-
-  var ownerName = document.createTextNode(project.owner.name);
-  ownerName.className = "name";
-
-  var ownerLink = document.createElement('a');
-  var ownerUrl = document.createTextNode(project.owner.url);
-  ownerLink.setAttribute('href', project.owner.url);
-  ownerLink.appendChild(ownerUrl);
-  ownerUrl.className = "url";
-
+  var ownerContainer = document.createElement("div");
+  ownerContainer.className = "owner-container";
+  var ownerHeader = document.createElement("div");
+  ownerHeader.className = "owner-header";
+  ownerHeader.innerHTML = "Project owner:";
   var ownerImage = document.createElement("img");
   ownerImage.className = "picture";
   ownerImage.setAttribute("src", project.owner.image);
+  var ownerName = document.createElement("div");
+  ownerName.className = "owner-name";
+  ownerName.innerHTML = project.owner.name;
+  var ownerLink = document.createElement("a");
+  var lineBreak = document.createElement("br");
+  var ownerUrl = document.createElement("div");
+  ownerUrl.innerHTML = project.owner.url;
+  ownerLink.setAttribute('href', project.owner.url);
+  ownerLink.appendChild(ownerUrl);
+  ownerLink.className = "owner-url";
+  ownerContainer.appendChild(ownerHeader);
+  ownerContainer.appendChild(ownerImage);
+  ownerContainer.appendChild(ownerName);
+  ownerContainer.appendChild(lineBreak);
+  ownerContainer.appendChild(ownerLink);
 
-  var contributorsHeader = document.createTextNode("Amount of contributors:");
-  contributorsHeader.className = "contributorsheader";
-
-  var contributorsElement;
+  var contributorsContainer = document.createElement("div");
+  contributorsContainer.className = "contributors-container"
+  var contributorsHeader = document.createElement("div");
+  contributorsHeader.innerHTML = "Amount of contributors:";
+  contributorsHeader.className = "contributors-header";
+  var contributorsElement = document.createElement("div");
   if (typeof project.amount_contributors == "undefined") {
-    contributorsElement = document.createTextNode("0");
+    contributorsElement.innerHTML = "0";
   } else {
-    contributorsElement = document.createTextNode(project.amount_contributors);
+    contributorsElement.innerHTML = project.amount_contributors;
   }
   contributorsElement.className = "contributors";
+  contributorsContainer.appendChild(contributorsHeader);
+  contributorsContainer.appendChild(contributorsElement);
 
-  var homepageHeader = document.createTextNode("External homepage:");
-  homepageHeader.className = "homepageheader";
-
+  var homepageContainer = document.createElement("div");
+  homepageContainer.className = "homepageContainer";
+  var homepageHeader = document.createElement("div");
+  homepageHeader.innerHTML = "External homepage:";
+  homepageHeader.className = "homepage-header";
   var homepageElement;
   var externalHomepage;
   if (project.external_homepage == null) {
-    externalHomepage = document.createTextNode("-");
+    externalHomepage = document.createElement("div");
+    externalHomepage.innerHTML = "-";
   } else {
     externalHomepage = document.createElement('a');
-    homepageElement = document.createTextNode(project.external_homepage);
+    homepageElement = document.createElement("div");
+    homepageElement.innerHTML = project.external_homepage;
     externalHomepage.setAttribute('href', project.external_homepage);
     externalHomepage.appendChild(homepageElement);
-
   }
   externalHomepage.className = "homepage";
+  homepageContainer.appendChild(homepageHeader);
+  homepageContainer.appendChild(externalHomepage);
 
-  detailsContainer.appendChild(ownerHeader);
-  detailsContainer.appendChild(ownerName);
-  detailsContainer.appendChild(ownerLink);
-  detailsContainer.appendChild(ownerImage);
-  detailsContainer.appendChild(contributorsHeader);
-  detailsContainer.appendChild(contributorsElement);
-  detailsContainer.appendChild(homepageHeader);
-  detailsContainer.appendChild(externalHomepage);
+  detailsContainer.appendChild(ownerContainer);
+  detailsContainer.appendChild(contributorsContainer);
+  detailsContainer.appendChild(homepageContainer);
   projectDetails.appendChild(detailsContainer);
   isLoading = 0;
 }
