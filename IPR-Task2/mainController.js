@@ -1,5 +1,5 @@
 /**
-  mainController handles
+  The mainController handles the users input and the communication with the backend
   @author H.Tanke, B. Petschelt, P. Mitzlaff
   @version 1.0
 */
@@ -171,7 +171,7 @@ function tableElementClicked(element) {
       isLoading = 0;
       return;
     } else {
-      //closing the extenden details row and proceeding...
+      //closing the extended details row and proceeding...
       closeExtendedDetails();
     }
   }
