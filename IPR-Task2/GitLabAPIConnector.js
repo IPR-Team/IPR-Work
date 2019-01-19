@@ -22,7 +22,6 @@ function GitLabAPIConnector(token) {
   @param callback a function where results will inserted
   */
   this.searchForProjects = function(search_string, amount_of_results, page, createdBeforeDate, callback) {
-    s
     var url = "https://gitlab.com/api/v4/search";
     var query = "&search=".concat(search_string);
     var scope = "?scope=projects";

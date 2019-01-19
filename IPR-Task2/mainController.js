@@ -45,7 +45,7 @@ function addElementToTable(general, description, source, last_updated) {
 
   var descriptionCell = newRow.insertCell(2);
   var descriptionElement;
-  if (description == null) {
+  if (!description) {
     descriptionElement = document.createTextNode("-");
   } else {
     descriptionElement = document.createTextNode(description);
