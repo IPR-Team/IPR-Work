@@ -48,21 +48,4 @@ function TextTranslator(token) {
         callback(id, null);
       });
   }
-
-  var cleanContent = function(content) {
-    for (var i = 0; i < content.length; i++) {
-      content[i] = trimText(content[i]);
-    }
-    return content;
-  }
-
-  var trimText = function(text) {
-    while (text.substring(0, 1).match("[\"\'\\]") != null) {
-      text = text.substring(1, text.length);
-    }
-    while (text.substring(text.length - 1, text.length).match("[\"\'\\]") != null) {
-      text = text.substring(0, text.length - 1);
-    }
-    return text;
-  }
 }
