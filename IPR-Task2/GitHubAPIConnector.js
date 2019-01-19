@@ -4,7 +4,7 @@
   it provides a function to handles this aspect. But this function only turn back
   general data of projects. To get detailed information about a project
   there is a second function.
-  @author H.Tanke
+  @author H.Tanke, P. Mitzlaff
   @version 1.0
 */
 function GitHubAPIConnector(token) {

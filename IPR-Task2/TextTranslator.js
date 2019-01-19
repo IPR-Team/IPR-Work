@@ -2,6 +2,8 @@
   The TextTranslator manages text translation with help of Yandex.
   It requires a access token in order to perform a translation by API request.
   In order to create a access token a free registration on yandex website is required.
+  @author H.Tanke, P. Mitzlaff
+  @version 1.0
 */
 function TextTranslator(token) {
   var privateToken = token;
