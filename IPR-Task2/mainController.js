@@ -1,8 +1,8 @@
-var rowCounter = 0;
+var rowCounter = 0; // used to correctly insert new rows into the table
 var currentPage = 1;
-var elementsPerPage = 50;
-var receivedProjects = 0;
-var connectorCallbacks = 0;
+var elementsPerPage = 50; //amount of displayed elements per page
+var receivedProjects = 0; //used to determine, when all projects are correctly received
+var connectorCallbacks = 0; //used to determine, when all projects are correctly received
 var connectorAPIs = [];
 var connectorManager = {};
 var projects = [];
@@ -14,8 +14,6 @@ token_config['GitLab'] = null; //"zsPXGhyv5Rn4ss9W7f2u"
 token_config['Yandex'] = null; //"trnsl.1.1.20190113T111827Z.f1625132c6454630.d83702b62ef89556bccf67d9c4df672d2b4a7275"
 isLoading = 0;
 var date;
-
-var createdDataCounter = 0; // is this used?
 
 function addElementToTable(general, description, source, last_updated) {
   rowCounter++;
@@ -130,7 +128,10 @@ function processConfiguration() {
   }
   return true;
 }
-
+/**
+  Opens or closes the extended details of a project.
+  @param element the table row
+*/
 function tableElementClicked(element) {
   if (isLoading == 1) {
     window.alert("Another request is still in progress...");
@@ -143,17 +144,21 @@ function tableElementClicked(element) {
   var selectedProject = projects[id - 1];
   var selectedRow = document.getElementById(id);
   if (document.getElementsByClassName("extended-tablecell").length > 0) {
+    //another row is already extended
     if (selectedRow.classList.contains("extended-tablecell")) {
+      //the currently selected row is extenden -> close and return
       document.getElementById("extended-details").remove();
       selectedRow.classList.remove("extended-tablecell");
       isLoading = 0;
       return;
     } else {
+      //closing the extenden details row and proceeding...
       closeExtendedDetails();
     }
   }
   selectedRow.className = "extended-tablecell";
   var connector;
+  //getting the source of the table row and performing the request
   if (selectedProject.source == "GitHub" || selectedProject.source == "GitLab") {
     if (selectedProject.source == "GitHub") {
       connector = getSourceConnector("GitHub");
@@ -172,6 +177,9 @@ function tableElementClicked(element) {
   }
 }
 
+/**
+  Closes the extendend details row in the table
+*/
 function closeExtendedDetails() {
   var extendedRow = document.getElementsByClassName("extended-tablecell");
   var details = document.getElementById("extended-details");
@@ -180,7 +188,9 @@ function closeExtendedDetails() {
   }
   extendedRow[0].classList.remove("extended-tablecell");
 }
-
+/**
+  Returns the source connector of a table element
+*/
 function getSourceConnector(source) {
   var connector;
   for (var i = 0; i < connectorAPIs.length; i++) {
@@ -199,23 +209,30 @@ function getSourceConnector(source) {
     }
   }
 }
-
+/**
+  Extends the details of a project
+  @param id the table row
+  @param project the project in this row
+*/
 function extendContent(id, project) {
-  //
+  //The rows of the table are always from 1 - elementsPerPage
+  //-> making sure it's within range
   if (id >= elementsPerPage) {
     id = id % elementsPerPage;
     if (id == 0) {
       id = elementsPerPage;
     }
   }
+  //adding a row which spans over the whole table
   var table = document.getElementById("resultTable").getElementsByTagName('tbody')[0];
   var newRow = table.insertRow(id);
   newRow.setAttribute("id", "extended-details");
   var projectDetails = newRow.insertCell(0);
   projectDetails.colSpan = "8";
+  //div container for the extra details
   var detailsContainer = document.createElement("div");
   detailsContainer.className = "details-container";
-
+  //owner container
   var ownerContainer = document.createElement("div");
   ownerContainer.className = "owner-container";
   var ownerHeader = document.createElement("div");
@@ -239,7 +256,7 @@ function extendContent(id, project) {
   ownerContainer.appendChild(ownerName);
   ownerContainer.appendChild(lineBreak);
   ownerContainer.appendChild(ownerLink);
-
+  //contributors container
   var contributorsContainer = document.createElement("div");
   contributorsContainer.className = "contributors-container"
   var contributorsHeader = document.createElement("div");
@@ -254,7 +271,7 @@ function extendContent(id, project) {
   contributorsElement.className = "contributors";
   contributorsContainer.appendChild(contributorsHeader);
   contributorsContainer.appendChild(contributorsElement);
-
+  //homepage container
   var homepageContainer = document.createElement("div");
   homepageContainer.className = "homepageContainer";
   var homepageHeader = document.createElement("div");
@@ -275,19 +292,24 @@ function extendContent(id, project) {
   externalHomepage.className = "homepage";
   homepageContainer.appendChild(homepageHeader);
   homepageContainer.appendChild(externalHomepage);
-
+  //adding the children and displaying
   detailsContainer.appendChild(ownerContainer);
   detailsContainer.appendChild(contributorsContainer);
   detailsContainer.appendChild(homepageContainer);
   projectDetails.appendChild(detailsContainer);
   isLoading = 0;
 }
-//Will be accessed by connectors!
+/**
+  Adds a single project into the table
+  @param project the project to add
+*/
 function addProjectToTable(project) {
   addElementToTable(project.general, project.description, project.source, project.last_updated);
-  //save porjects in ram for later proposals?
 }
-
+/**
+  Sorts the newly received projects
+  @param newProjects the array of new projects
+*/
 function sortProjects(newProjects) {
   newProjects.sort(function(a, b) {
     return a.last_updated < b.last_updated
@@ -299,15 +321,23 @@ function sortProjects(newProjects) {
     getExistingProjects(rowCounter);
   }
 }
-
+/**
+  Clears all elements from the table
+*/
 function clearTable() {
   document.getElementById("resultTable").getElementsByTagName('tbody')[0].innerHTML = "";
 }
-
+/**
+  Deletes unnecessary symbols -> only letters and decimals allowed
+  @param searchString the user input
+*/
 function processSearchString(searchString) {
   return searchString.replace(/[^\w\d]+/g, " ").trim().toLowerCase().replace(/\s+/g, "+");
 }
-
+/**
+  Displays or hides the result area
+  @param showTable true or false value
+*/
 function toggleResultTable(showTable) {
   var table = document.getElementById("resultArea");
   if (showTable) {
@@ -318,7 +348,10 @@ function toggleResultTable(showTable) {
     table.style.display = "none";
   }
 }
-
+/**
+  Displays or hides the searching indicator
+  @param showIndicator true or false value
+*/
 function toggleSearchingIndicator(showIndicator) {
   var searchingIndicator = document.getElementById("searchingIndicator");
   if (showIndicator) {
@@ -327,13 +360,15 @@ function toggleSearchingIndicator(showIndicator) {
     searchingIndicator.style.display = "none";
   }
 }
-
+/**
+  Handles the click on the search button
+*/
 function searchButtonClicked() {
-  translateAllId = 1;
   if (!processConfiguration()) {
     window.alert("Error on configuration. Be sure to add valid access tokens to configuration first to perform a search.");
     return
   }
+  //nothing entered...
   searchString = processSearchString(document.getElementById("input").value);
   if (searchString == "") {
     return;
@@ -342,18 +377,22 @@ function searchButtonClicked() {
   projects = [];
   connectorAPIs = [];
   connectorManager = new ConnectorManager(token_config['GitHub'], token_config['GitLab']);
-
+  //resetting the necessary values
   getSources();
   getConnectors();
   currentPage = 1;
   maxPage = 1;
   receivedProjects = 0;
   rowCounter = 0;
+  //the date is used to ignore newly created projects
+  //-> would lead to displacements when changing pages
   date = new Date(Date.now()).toISOString().replace(/[\..+Z]+/g, "+00:00");
   document.getElementById("lastSearchedOutput").innerHTML = searchString;
   initiateSearch();
 }
-
+/**
+  Executes a new search
+*/
 function initiateSearch() {
   toggleResultTable(false);
   clearTable();
@@ -363,13 +402,17 @@ function initiateSearch() {
   }
   toggleSearchingIndicator(true);
 }
-
+/**
+  Adds already received projects into the table
+  @param startRow starting index of the table row
+*/
 function getExistingProjects(startRow) {
   toggleResultTable(false);
   toggleSearchingIndicator(true);
   clearTable();
   receivedProjects = 0;
   for (var i = startRow; i < currentPage * elementsPerPage; i++) {
+    //end is reached
     if (typeof projects[i] == "undefined") {
       break;
     } else {
@@ -381,13 +424,17 @@ function getExistingProjects(startRow) {
   toggleSearchingIndicator(false);
   toggleResultTable(true);
 }
-
+/**
+  Adds the selected sources into the connectorAPIs array
+*/
 function getConnectors() {
   for (var i = 0; i < sources.length; i++) {
     connectorAPIs.push(connectorManager.getConnector(sources[i]));
   }
 }
+/**
 
+*/
 function prepareTable(projects) {
   if (projects == null || projects.length == 0) {
     return;
@@ -399,7 +446,9 @@ function prepareTable(projects) {
     toggleResultTable(true);
   }
 }
-
+/**
+  Adds the selected sources into the sources array
+*/
 function getSources() {
   var checkboxes = document.getElementsByName('source');
   for (var i = 0; i < checkboxes.length; i++) {
@@ -408,7 +457,9 @@ function getSources() {
     }
   }
 }
-
+/**
+  Checks wether the user can click on the next and previous page buttons
+*/
 function checkPages() {
   var previousButtons = document.getElementsByClassName("previous-page");
   var nextButtons = document.getElementsByClassName("next-page");
