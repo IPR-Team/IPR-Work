@@ -1,4 +1,18 @@
+/**
+  Not all letters / characters of a text are allowed for different process.
+  Sometime characters has a special context in greater context. This encoder
+  provides methods for different encodings.
+  @author H.Tanke
+  @version 1.0
+*/
 function TextEncoder(){
+  /**
+    To insert a text part in a domain part of an url its recommended to encode this text.
+    Otherwise forbidden characters with special function can create errors.
+    Use this function to encode a text and replace characters with speiacl
+    characters to obtain functionality.
+    @param text text with should be encoded
+  */
   this.EncodeUrl = function (text) {
     var match = text.search(/[\s\:/\?#\[\]\@\!\$\&'\(\)\*\,;=]/);
     while(match >= 0){
@@ -10,6 +24,11 @@ function TextEncoder(){
     return text;
   }
 
+  /**
+    With this function a sign will be encoded to url encode standard
+    in case the sign has a special meaning.
+    @param sign a sign which should be encoded to url encode standard  
+  */
   var getUrlEncodedSign = function (sign) {
     switch(sign){
       case " ":

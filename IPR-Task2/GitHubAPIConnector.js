@@ -1,14 +1,30 @@
-//Constructor and Class
+/**
+  GitHubAPIConnector handles request to GitHub API to receive different data of projects.
+  In order to perform a general search for projects with a specific name
+  it provides a function to handles this aspect. But this function only turn back
+  general data of projects. To get detailed information about a project
+  there is a second function.
+  @author H.Tanke
+  @version 1.0
+*/
 function GitHubAPIConnector(token) {
   var statusCode = 200;
   var privatToken = token;
-  //public function of object GitHubAPIConnector / each kind of connector do need this function!!!
+
+  /**
+  Use this function to perform a general search for projects in GitHub. This supports
+  pagination.
+  @param search_string projects will be choosen by means of this string
+  @param amount_of_results max results the api should turn back on request
+  @param page the part of the results which are requested.
+  @param createdBeforeDate request will turn back projects only ealier then this param
+  @param callback a function where results will inserted
+  */
   this.searchForProjects = function(search_string, amount_of_results, page, createdBeforeDate, callback) {
-    //Header: link - ...    auswerten für maximale Anzahl der Seiten
     var url = "https://api.github.com/search/repositories";
     var query = "?q=".concat(search_string);
     var created = "&created%3A<".concat(createdBeforeDate);
-    var accessToken = "&?access_token=" + privatToken; //ca3e81dec2b846edb9d005e3a2727e131aae15fb
+    var accessToken = "&access_token=" + privatToken; //ca3e81dec2b846edb9d005e3a2727e131aae15fb
     var maxResults = "&per_page=" + amount_of_results;
     var page = "&page=" + page;
     var sort = "&sort=updated";
@@ -36,7 +52,12 @@ function GitHubAPIConnector(token) {
       })
   }
 
-  //use this function to get complete data set of a project
+  /**
+    Use this function to get more detailed informations of one project.
+    @param id identifier for matching results
+    @param project porject object which already holds a bunch of information
+    @param callback a function where full project info will be inserted
+  */
   this.getProjectDetails = function(id, project, callback) {
     var url = "https://api.github.com"
     var accessToken = "?access_token=" + privatToken;
@@ -64,6 +85,17 @@ function GitHubAPIConnector(token) {
       })
   }
 
+  /**
+  GitHub stores a large amount of project and thier data. Sometimes processing a search
+  on this data set took to long. In this case a request will just start process.
+  More request are needed to get processed data / found projects.
+  This function request API rekursive until a request turns data back or a timeout has reached.
+  @param url url for request
+  @param timeout_counter amount of request failing until abored.
+  @param id identifier for matching results
+  @param project porject object which already holds a bunch of information
+  @param callback a function where full project info will be inserted
+  */
   var renew_request = function(url, timeout_counter, id, project, callback) {
     if (timeout_counter > 5) {
       window.alert("Time out on updateting project info");
@@ -92,7 +124,12 @@ function GitHubAPIConnector(token) {
     }
   }
 
-  //private function: Shortened description by triming full string
+  /**
+   Sometimes author create descriptions with many whitespace, tabs, returns or newlines
+   to outline special information or present text in an own format. This special characters
+   are unnecessary informations and will be cutted out by this function. This saves memory.
+   @param description description string of project with maybe this special characters.
+  */
   var processDescription = function(description) {
     if (description != null) {
       description = description.replace(/[\s\r\n\t]+/g, " "); //regex -> check me on regexr.com
@@ -100,14 +137,13 @@ function GitHubAPIConnector(token) {
     return description;
   }
 
+  /**
+    Not all informations of a project are necessary. This function filters those informations
+    and match the necesarry ones in a project object
+    @param object js object with all informations of a project
+    @return project object with necessary informations
+  */
   var parseObjectToProjectData = function(object) {
-    //Name Projekt/Repository + Url
-    //Description
-    //Quelle (GitHub, GitLab or BitBucket)
-    //Datum letzte Aktualisierung
-    //Owner + Profpic + Url
-    //Anzahl beteiligte Personen/Orgnaisationen (Contributors)
-    //Projektseite/Homepage außerhalb repo
     var project = {};
     project.general = {};
     project.general.name = object.name;

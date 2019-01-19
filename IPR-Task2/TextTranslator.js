@@ -1,10 +1,22 @@
+/**
+  The TextTranslator manages text translation with help of Yandex.
+  It requires a access token in order to perform a translation by API request.
+  In order to create a access token a free registration on yandex website is required.
+*/
 function TextTranslator(token) {
   var privateToken = token;
   var encoder = new TextEncoder();
-  //text = array, targetLanguageKey: f.e. ru, de, en
+
+  /**
+    Use this function to translate a text to a specific language
+    @param text text for translation
+    @param targetLanguageKey target language identifier
+    @param id for matching result
+    @param callback a function where result will be inserted
+  */
   this.translateText = function(text, targetLanguageKey, id, callback) {
     var url = "https://translate.yandex.net/api/v1.5/tr.json/translate";
-    var key = "?key=" + privateToken; //trnsl.1.1.20190113T111827Z.f1625132c6454630.d83702b62ef89556bccf67d9c4df672d2b4a7275
+    var key = "?key=" + privateToken;
     var content = "";
     var content = "&text=";
     var lang = "&lang=".concat(targetLanguageKey)
@@ -27,9 +39,7 @@ function TextTranslator(token) {
       .then(function(jsonString) {
         var contentParts = jsonString.text;
         console.log(jsonString);
-        console.log("Received " + jsonString.text + " translated content parts");
-        //var translatedContentParts = cleanContent(contentParts);
-        //callback(translatedContentParts);
+        console.log("Received translation.");
         callback(id, contentParts);
       })
       .catch(function(error) {
