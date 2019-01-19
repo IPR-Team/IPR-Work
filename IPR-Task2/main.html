@@ -126,16 +126,19 @@
 					<option value="ja">Japanese</option>
 				</select>
 			</form>
-			<h3>Configuration access token:</h3>
-			<label>Github:
-				<input id="ghTokenInput" type="text" value="ca3e81dec2b846edb9d005e3a2727e131aae15fb">
-			</label>
-			<label>GitLab:
-				<input id="glTokenInput" type="text" value="zsPXGhyv5Rn4ss9W7f2u">
-			</label>
-			<label>Yandex:
-				<input id="ydTokenInput" type="text" value="trnsl.1.1.20190113T111827Z.f1625132c6454630.d83702b62ef89556bccf67d9c4df672d2b4a7275">
-			</label>
+			<h3>Configuration your access tokens:</h3>
+			<div class="access-token-container">
+				<div class="access-token-label">Github:</div>
+				<input id="ghTokenInput" type="text" value="ca3e81dec2b846edb9d005e3a2727e131aae15fb" class="access-token-input">
+			</div>
+			<div class="access-token-container">
+				<div class="access-token-label">GitLab:</div>
+				<input id="glTokenInput" type="text" value="zsPXGhyv5Rn4ss9W7f2u" class="access-token-input">
+			</div>
+			<div class="access-token-container">
+				<div class="access-token-label">Yandex:</div>
+				<input id="ydTokenInput" type="text" value="trnsl.1.1.20190113T111827Z.f1625132c6454630.d83702b62ef89556bccf67d9c4df672d2b4a7275" class="access-token-input">
+			</div>
 			<h3>Search for projects:</h3>
 			<div class="project-search">
 				<input id="input" type="text" placeholder="Project name...">

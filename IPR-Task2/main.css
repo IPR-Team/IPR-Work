@@ -18,7 +18,6 @@ body {
 	font-family: 'Nunito', sans-serif;
 	color: white;
 }
-
 .header{
 	margin: 0;
 	background: #192534;
@@ -38,11 +37,9 @@ body {
 	background-color: #111922;
 	height: 4px;
 }
-
 .body-container {
 	margin: 15px;
 }
-
 .checkbox-group {
 	position: relative;
 	display: block;
@@ -90,7 +87,24 @@ body {
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
-
+.access-token-container{
+	width: 100%;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+.access-token-label{
+	line-height: 40px;
+	width: 80px;
+	float: left;
+}
+.access-token-input{
+	height: 40px;
+	width: 600px;
+	background: rgba(255,255,255, 0.1);
+	border: 1px solid;
+	color: white;
+	border-color: #111922;
+}
 .project-search {
 	width: 500px;
 	height: 40px;

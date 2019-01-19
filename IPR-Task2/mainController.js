@@ -1,4 +1,3 @@
-// // TODO: NextPage muss abhängig von der projects.length sein, nicht von der maxPage
 var rowCounter = 0;
 var currentPage = 1;
 var elementsPerPage = 50;
