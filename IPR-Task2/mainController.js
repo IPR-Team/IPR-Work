@@ -68,13 +68,31 @@ function addElementToTable(general, description, source, last_updated) {
   updatedCell.appendChild(updatedElement);
 }
 
+function translateAllButtonClicked() {
+  var translateAllId = ((currentPage - 1) * elementsPerPage) + 1;
+  var languages = document.getElementById("LanguageSelection");
+  var languageCode = languages.options[languages.selectedIndex].value;
+  translateAPI = new TextTranslator(token_config['Yandex']);
+  if (languageCode === "") {
+    window.alert("First select language to translate.");
+
+  } else {
+    for (translateAllId; translateAllId < rowCounter + 1; translateAllId++) {
+      var description = document.getElementById(translateAllId).getElementsByTagName("td")[2].innerHTML;
+      if (description == null) {
+        description = "-";
+      }
+      translateAPI.translateText(description, languageCode, translateAllId, translatedText);
+
+    }
+  }
+}
+
 function translateButtonClicked(element) {
   var languages = document.getElementById("LanguageSelection");
   var languageCode = languages.options[languages.selectedIndex].value;
   var id = element.target.parentElement.parentElement.id;
-  console.log(id);
   var description = document.getElementById(id).getElementsByTagName("td")[2].innerHTML;
-  console.log(description);
   translateAPI = new TextTranslator(token_config['Yandex']);
   if (languageCode === "") {
     window.alert("First select language to translate.");
@@ -312,6 +330,7 @@ function toggleSearchingIndicator(showIndicator) {
 }
 
 function searchButtonClicked() {
+  translateAllId = 1;
   if (!processConfiguration()) {
     window.alert("Error on configuration. Be sure to add valid access tokens to configuration first to perform a search.");
     return
