@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-var rowCounter = 0; // used to correctly insert new rows into the table
-=======
 /**
   mainController handles
   @author H.Tanke, B. Petschelt, P. Mitzlaff
@@ -8,7 +5,6 @@ var rowCounter = 0; // used to correctly insert new rows into the table
 */
 
 var rowCounter = 0;
->>>>>>> 0f2e71e85f9e313a362890ec735ab3918022b20e
 var currentPage = 1;
 var elementsPerPage = 50; //amount of displayed elements per page
 var receivedProjects = 0; //used to determine, when all projects are correctly received
